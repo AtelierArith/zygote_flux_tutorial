@@ -24,7 +24,7 @@ SatoshiTerasaki@[AtelierArith](https://sites.google.com/atelier-arith.jp/atelier
 
 ---
 
-# Usage: single variable
+# Usage: Univariate function
 
 - 関数 $f(x) = x^2 + x$ に対して導関数 $f'(x)$ を求めたい. 
   - もちろん人類は $f'(x) = 2x + 1$ であることは知っている.
@@ -65,7 +65,7 @@ julia> @assert gradient(f, 3, 4, 5) == ∇f(3, 4, 5) == (20, 15, 12)
 
 ---
 
-# Usage: jacobian matrix Part 1
+# Usage: Jacobian matrix Part 1
 
 - 曲座標変換 $x=x(r, \theta) = r\cos\theta, y = y(r, \theta)=r\sin\theta$ に対するヤコビ行列を計算したい:
 
@@ -74,6 +74,7 @@ julia> @assert gradient(f, 3, 4, 5) == ∇f(3, 4, 5) == (20, 15, 12)
 </center>
 
 - Julia だと次のようにする:
+
 ```julia
 julia> using Zygote
 julia> x(r, θ) = r * cos(θ); y(r, θ) = r * sin(θ)
@@ -93,7 +94,7 @@ julia> @assert J_zygote ≈ J_theoretical
 
 ---
 
-# Usage: jacobian matrix Part 2
+# Usage: Jacobian matrix Part 2
 
 ついでに $\iint\exp(-x^2-y^2)dxdy=\pi$ を極座標表示による変数変換後で積分を行うことで確認してみよう.
 
@@ -110,6 +111,105 @@ julia> g(r, θ) = f(x(r, θ), y(r, θ)) * (det(J(r, θ))) # 変数変換 * ヤ�
 julia> g(rθ) = g(rθ[1], rθ[2]) # `hcubature` 関数が受け付けるようにする.
 julia> 積分, _ = hcubature(g, [0, 0], [5, 2π]) # r ∈ [0, 5], θ ∈ [0,  2π]
 julia> @assert 積分 ≈ π # 右辺は円周率
+```
+
+---
+
+# Application: Length of curves
+
+- 半径 $r$ の円周上を動く車の $c = c(t) = (x(t), y(t))=(r \cos t, r \sin t) \in \mathbb{R}^2$ を時刻 $t=0$ からある時刻 $t$ までの移動距離 $s=s(t)$ を求める.
+
+<center>
+  <img src=https://user-images.githubusercontent.com/16760547/130846317-48205f82-88c6-4208-bbf4-0a2ad815e63d.gif />
+</center>
+
+- 素直に Julia で実装すると次のようになる:
+
+```julia
+julia> using Zygote, QuadGK, LinearAlgebra
+julia> const r = 2.
+julia> p(t) = [r * cos(t), r * sin(t)]
+julia> ṗ(t) = jacobian(p, t)[begin] # 戻り値が length=1 の Tuple で来るので中身を取り出す.
+julia> s(t) = quadgk(t̃->norm(ṗ(t̃)), 0, t)[begin] # 積分を実行
+julia> t = π # \pi + tab で補完
+julia> @assert s(t) == r * t
+```
+
+- 上記のコードに続いて $s'(t)$ を計算できるとカッコいいところ見せられたが, エラーが生じて動作しない.
+
+---
+
+# Application: Vector fields
+
+```julia
+julia> # 前のページの続き
+julia> using Plots
+julia> t_range = 0:0.5:2π
+julia> plot(size=(800,800))
+julia> plot!(t->p(t)[1], t->p(t)[2], 0, 2π, aspect_ratio=:equal, legend=false)
+julia> quiver!(
+  [p(t)[1] for t in t_range], [p(t)[2] for t in t_range], # 始点
+  quiver=([ṗ(t)[1] for t in t_range], [ṗ(t)[2] for t in t_range]) # 終点
+) 
+```
+
+<center>
+  <img width="300" alt="Screen Shot 2021-08-26 at 4 06 44" src="https://user-images.githubusercontent.com/16760547/130850395-a550f26d-c904-47a7-9b57-67a9f0530431.png">
+</center>
+
+---
+
+# Usage: Hessian matrix part 1
+
+- どうせなので二階微分もしましょう.
+
+```julia
+julia> using Zygote
+julia> f(x) = 3^x
+julia> df(x) = log(3) * 3^x; ddf(x) = log(3)^2 * 3^x
+julia> @assert f'(x) ≈ df(x)
+julia> @assert f''(x) ≈ ddf(x)
+```
+
+- ヘッセ行列 (Hessian matrix) も作れます.
+
+```julia
+julia> using Zygote
+julia> f(x, y) = sin(x - y)
+julia> f(xy) = f(xy[1], xy[2])
+julia> x, y = π/2, π/4
+julia> h_zygote = hessian(f, [x, y])
+julia> h_theoretical = [
+          -sin(x-y) sin(x-y) 
+          sin(x-y) -sin(x-y)
+       ]
+julia> @assert h_theoretical ≈ h_zygote
+```
+
+---
+
+# Usage: Hessian matrix part 2
+
+高階偏導関数の計算
+
+KdV 方程式 <img src=https://user-images.githubusercontent.com/16760547/130854677-b6eef6d5-97cc-4374-afff-a8ebbf772de9.gif /> の解として
+<img src=https://user-images.githubusercontent.com/16760547/130854649-2bbe7a0a-49ea-4061-8ef7-e99ff7529d61.gif width="400"/> なるものが知られている.
+
+```julia
+julia> using Zygote
+julia> const c = 2
+julia> const θ = 6
+julia> u(x, t) = (c/2)*(sech(√c / 2 * (x - c * t - θ)))^2
+julia> ∂ₓu(x, t) = gradient(u, x, t)[begin] # \partial + tab + \_t + tab
+julia> ∂ₜu(x, t) = gradient(u, x, t)[end]
+julia> ∂²ₓu(x, t) = gradient(∂ₓu, x, t)[begin] # \partial + tab + \^2 + tab
+julia> ∂³ₓu(x, t) = gradient(∂²ₓu, x, t)[begin] # \partial + tab + \^3 + tab
+julia> ∂³ₓu(x, t) = hessian(xt -> ∂ₓu(xt[1], xt[2]), [x, t])[1, 1]
+julia> ∂ₓu(1., 1.) # 試運転
+julia> ∂²ₓu(1., 1.) # ちょっと時間がかかる
+julia> ∂³ₓu(1., 1.) # 気長に待つ
+julia> x, t = rand(), rand()
+julia> @assert abs(∂ₜu(x, t) + 6u(x,t)*∂ₓu(x,t) + ∂³ₓu(x, t)) <  eps(Float64) # 左辺は非常に小さい数になっている.
 ```
 
 ---
@@ -141,53 +241,9 @@ julia> @assert gs[b] == ones(2)
 
 ---
 
-class: center, middle
+# Zygote.jl に関するここまでのまとめ 
 
-# Application
-
----
-
-# Length of curves
-
-- 半径 $r$ の円周上を動く車の $c = c(t) = (x(t), y(t))=(r \cos t, r \sin t) \in \mathbb{R}^2$ を時刻 $t=0$ からある時刻 $t$ までの移動距離 $s=s(t)$ を求める.
-
-<center>
-  <img src=https://user-images.githubusercontent.com/16760547/130846317-48205f82-88c6-4208-bbf4-0a2ad815e63d.gif />
-</center>
-
-- 素直に Julia で実装すると次のようになる:
-
-```julia
-julia> using Zygote, QuadGK, LinearAlgebra
-julia> const r = 2.
-julia> p(t) = [r * cos(t), r * sin(t)]
-julia> ṗ(t) = jacobian(p, t)[begin] # 戻り値が length=1 の Tuple で来るので中身を取り出す.
-julia> s(t) = quadgk(t̃->norm(ṗ(t̃)), 0, t)[begin] # 積分を実行
-julia> t = π # \pi + tab で補完
-julia> @assert s(t) == r * t
-```
-
-- 上記のコードに続いて $s'(t)$ を計算できるとカッコいいところ見せられたが, エラーが生じて動作しない.
-
----
-
-# Vector fields
-
-```julia
-julia> # 前のページの続き
-julia> using Plots
-julia> t_range = 0:0.5:2π
-julia> plot(size=(800,800))
-julia> plot!(t->p(t)[1], t->p(t)[2], 0, 2π, aspect_ratio=:equal, legend=false)
-julia> quiver!(
-  [p(t)[1] for t in t_range], [p(t)[2] for t in t_range], # 始点
-  quiver=([ṗ(t)[1] for t in t_range], [ṗ(t)[2] for t in t_range]) # 終点
-) 
-```
-
-<center>
-  <img width="300" alt="Screen Shot 2021-08-26 at 4 06 44" src="https://user-images.githubusercontent.com/16760547/130850395-a550f26d-c904-47a7-9b57-67a9f0530431.png">
-</center>
+- Julia の中で定義した関数の微分は `using Zygote` を詠唱し適切な関数を呼び出すことで導関数を使うことができてしまった.
 
 ---
 
@@ -244,7 +300,7 @@ julia> @assert gs[b] == 1
 # Appendix: 高階偏導関数の計算
 
 KdV 方程式 <img src=https://user-images.githubusercontent.com/16760547/130854677-b6eef6d5-97cc-4374-afff-a8ebbf772de9.gif /> の解として
-<img src=https://user-images.githubusercontent.com/16760547/130854649-2bbe7a0a-49ea-4061-8ef7-e99ff7529d61.gif width="400"/> なるものが知られているが, ナイーブに Julia で実現しようとすると難しい.
+<img src=https://user-images.githubusercontent.com/16760547/130854649-2bbe7a0a-49ea-4061-8ef7-e99ff7529d61.gif width="400"/> なるものが知られている.
 
 ```julia
 julia> using Zygote
@@ -254,8 +310,11 @@ julia> u(x, t) = (c/2)*(sech(√c / 2 * (x - c * t - θ)))^2
 julia> ∂ₓu(x, t) = gradient(u, x, t)[begin] # \partial + tab + \_t + tab
 julia> ∂ₜu(x, t) = gradient(u, x, t)[end]
 julia> ∂²ₓu(x, t) = gradient(∂ₓu, x, t)[begin] # \partial + tab + \^2 + tab
-julia> ∂³ₓu(x, t) = gradient(∂²ₓu, x, t)[begin] # \partial + tab + \^3 + tab
-julia> ∂ₓu(1., 1.)
-julia> ∂²ₓu(1., 1.)
-julia> ∂³ₓu(1., 1.) # 永遠に JIT コンパイルしている.
+julia> ∂³ₓu(x, t) = gradient(∂²ₓu, x, t)[begin] # この定義は失敗する
+julia> ∂³ₓu(x, t) = hessian(xt -> ∂ₓu(xt[1], xt[2]), [x, t])[1, 1] # こっちにするとうまくいく
+julia> ∂ₓu(1., 1.) # 試運転
+julia> ∂²ₓu(1., 1.) # ちょっと時間がかかる
+julia> ∂³ₓu(1., 1.) # 気長に待つ
+julia> x, t = rand(), rand()
+julia> @assert abs(∂ₜu(x, t) + 6u(x,t)*∂ₓu(x,t) + ∂³ₓu(x, t)) <  eps(Float64) # 左辺は非常に小さい数になっている.
 ```
