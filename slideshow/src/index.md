@@ -146,6 +146,8 @@ julia> t = π # \pi + tab で補完
 julia> @assert s(t) == r * t
 ```
 
+- 上記のコードに続いて $s'(t)$ を計算できるとカッコいいところ見せられたが, エラーが生じて動作しない.
+
 ---
 
 # Vector fields
@@ -165,38 +167,6 @@ julia> quiver!(
 <center>
   <img width="300" alt="Screen Shot 2021-08-26 at 4 06 44" src="https://user-images.githubusercontent.com/16760547/130850395-a550f26d-c904-47a7-9b57-67a9f0530431.png">
 </center>
-
----
-
-# Soliton
-
-KdV 方程式 <img src=https://user-images.githubusercontent.com/16760547/130854677-b6eef6d5-97cc-4374-afff-a8ebbf772de9.gif /> の解として
-<img src=https://user-images.githubusercontent.com/16760547/130854649-2bbe7a0a-49ea-4061-8ef7-e99ff7529d61.gif width="400"/> なるものが知られている.
-
-```julia
-julia> using Zygote
-julia> const c = 1
-julia> const θ = 6
-julia> u(x, t) = (c/2)*(sech(√c / 2 * (x - c * t - θ)))^2
-julia> ∂ₓu(x, t) = gradient(u, x, t)[begin] # \partial + tab + \_t + tab
-julia> ∂ₜu(x, t) = gradient(u, x, t)[end]
-julia> ∂²ₓu(x, t) = gradient(∂ₓu, x, t) # \partial + tab + \^2 + tab
-julia> ∂³ₓu(x, t) = gradient(∂²ₓu, x, t) # \partial + tab + \^3 + tab
-```
-
----
-
-```julia
-julia> using Zygote
-julia> const c = 1
-julia> const θ = 6
-julia> u(x, t) = (c/2)*(sech(√c / 2 * (x - c * t - θ)))^2
-julia> ∂ₓu(x, t) = gradient(u, x, t)[begin] # \partial + tab + \_t + tab
-julia> ∂ₜu(x, t) = gradient(u, x, t)[end]
-julia> h(x,t)=hessian(xt -> u(xt[1], xt[2]), [x,t])
-julia> u_xx(x, t) = h(x,t)[1, 1]
-julia> ∂³ₓu(x, t) = gradient(u_xx, x, t) # \partial + tab + \^3 + tab
-```
 
 ---
 
@@ -246,4 +216,23 @@ julia> gs = gradient(Params([a, b])) do
        end
 julia> @assert gs[a] == x == 999
 julia> @assert gs[b] == 1
+```
+
+---
+
+# Appendix: 高階偏導関数の計算
+
+KdV 方程式 <img src=https://user-images.githubusercontent.com/16760547/130854677-b6eef6d5-97cc-4374-afff-a8ebbf772de9.gif /> の解として
+<img src=https://user-images.githubusercontent.com/16760547/130854649-2bbe7a0a-49ea-4061-8ef7-e99ff7529d61.gif width="400"/> なるものが知られているが, ナイーブに Julia で実現しようとすると難しい.
+
+```julia
+julia> using Zygote
+julia> const c = 1
+julia> const θ = 6
+julia> u(x, t) = (c/2)*(sech(√c / 2 * (x - c * t - θ)))^2
+julia> ∂ₓu(x, t) = gradient(u, x, t)[begin] # \partial + tab + \_t + tab
+julia> ∂ₜu(x, t) = gradient(u, x, t)[end]
+julia> ∂²ₓu(x, t) = gradient(∂ₓu, x, t) # \partial + tab + \^2 + tab
+julia> ∂³ₓu(x, t) = gradient(∂²ₓu, x, t) # \partial + tab + \^3 + tab
+julia> ∂³ₓu(1., 1.) # 永遠に JIT コンパイルしている.
 ```
