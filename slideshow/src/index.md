@@ -122,11 +122,91 @@ julia> @assert gs[b] == ones(2)
 
 class: center, middle
 
+# Application
+
+---
+
+# Length of curves
+
+- 半径 $r$ の円周上を動く車の $c = c(t) = (x(t), y(t))=(r \cos t, r \sin t) \in \mathbb{R}^2$ を時刻 $t=0$ からある時刻 $t$ までの移動距離 $s=s(t)$ を求める.
+
+<center>
+  <img src=https://user-images.githubusercontent.com/16760547/130846317-48205f82-88c6-4208-bbf4-0a2ad815e63d.gif />
+</center>
+
+- 素直に Julia で実装すると次のようになる:
+
+```julia
+julia> using Zygote, QuadGK, LinearAlgebra, StaticArrays
+julia> const r = 2.
+julia> p(t) = [r * cos(t), r * sin(t)]
+julia> ṗ(t) = jacobian(p, t)[begin] # 戻り値が length=1 の Tuple で来るので中身を取り出す.
+julia> s(t) = quadgk(t̃->sqrt(ṗ(t̃)[1]^2+ṗ(t̃)[2]^2), 0, t)[begin] # 積分を実行
+julia> t = π # \pi + tab で補完
+julia> @assert s(t) == r * t
+```
+
+---
+
+# Vector fields
+
+```julia
+julia> # 前のページの続き
+julia> using Plots
+julia> t_range = 0:0.5:2π
+julia> plot(size=(800,800))
+julia> plot!(t->p(t)[1], t->p(t)[2], 0, 2π, aspect_ratio=:equal, legend=false)
+julia> quiver!(
+  [p(t)[1] for t in t_range], [p(t)[2] for t in t_range], # 始点
+  quiver=([ṗ(t)[1] for t in t_range], [ṗ(t)[2] for t in t_range]) # 終点
+) 
+```
+
+<center>
+  <img width="300" alt="Screen Shot 2021-08-26 at 4 06 44" src="https://user-images.githubusercontent.com/16760547/130850395-a550f26d-c904-47a7-9b57-67a9f0530431.png">
+</center>
+
+---
+
+# Soliton
+
+KdV 方程式 <img src=https://user-images.githubusercontent.com/16760547/130854677-b6eef6d5-97cc-4374-afff-a8ebbf772de9.gif /> の解として
+<img src=https://user-images.githubusercontent.com/16760547/130854649-2bbe7a0a-49ea-4061-8ef7-e99ff7529d61.gif width="400"/> なるものが知られている.
+
+```julia
+julia> using Zygote
+julia> const c = 1
+julia> const θ = 6
+julia> u(x, t) = (c/2)*(sech(√c / 2 * (x - c * t - θ)))^2
+julia> ∂ₓu(x, t) = gradient(u, x, t)[begin] # \partial + tab + \_t + tab
+julia> ∂ₜu(x, t) = gradient(u, x, t)[end]
+julia> ∂²ₓu(x, t) = gradient(∂ₓu, x, t) # \partial + tab + \^2 + tab
+julia> ∂³ₓu(x, t) = gradient(∂²ₓu, x, t) # \partial + tab + \^3 + tab
+```
+
+---
+
+```julia
+julia> using Zygote
+julia> const c = 1
+julia> const θ = 6
+julia> u(x, t) = (c/2)*(sech(√c / 2 * (x - c * t - θ)))^2
+julia> ∂ₓu(x, t) = gradient(u, x, t)[begin] # \partial + tab + \_t + tab
+julia> ∂ₜu(x, t) = gradient(u, x, t)[end]
+julia> h(x,t)=hessian(xt -> u(xt[1], xt[2]), [x,t])
+julia> u_xx(x, t) = h(x,t)[1, 1]
+julia> ∂³ₓu(x, t) = gradient(u_xx, x, t) # \partial + tab + \^3 + tab
+```
+
+---
+
+class: center, middle
+
 # Appendix
 
 ---
 
-# Appendix: SymPy
+# Appendix: SymPy.jl
 
 - Python の sympy の Julia インターフェースを提供する [SymPy.jl](https://github.com/JuliaPy/SymPy.jl) のオブジェクトと連携させることもできる. 
   - 例えば $a$, $b$ がパラメータとし入力データ $x$ に対して得られた $ax + b$ のパラメータに関する偏微分を求めたい.
@@ -148,7 +228,7 @@ julia> @assert gs[b] == 1
 
 ---
 
-# Appendix: with SymEngine
+# Appendix: with SymEngine.jl
 
 - SymPy でやったことを [SymEngine.jl](https://github.com/symengine/SymEngine.jl) を使ってでもできる.
 
