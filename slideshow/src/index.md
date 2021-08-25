@@ -65,7 +65,7 @@ julia> @assert gradient(f, 3, 4, 5) == ∇f(3, 4, 5) == (20, 15, 12)
 
 ---
 
-# Usage: jacobian matrix
+# Usage: jacobian matrix Part 1
 
 - 曲座標変換 $x=x(r, \theta) = r\cos\theta, y = y(r, \theta)=r\sin\theta$ に対するヤコビ行列を計算したい:
 
@@ -89,6 +89,27 @@ julia> J_theoretical = [
  0.5        1.73205
 
 julia> @assert J_zygote ≈ J_theoretical
+```
+
+---
+
+# Usage: jacobian matrix Part 2
+
+ついでに $\iint\exp(-x^2-y^2)dxdy=\pi$ を極座標表示による変数変換後で積分を行うことで確認してみよう.
+
+```julia
+julia> using LinearAlgebra, Zygote, HCubature
+julia> x(r, θ) = r * cos(θ); y(r, θ) = r * sin(θ)
+julia> Φ(r, θ) = [x(r,θ), y(r, θ)]
+julia> function J(r, θ)
+           jac = jacobian(Φ, r, θ)
+           return hcat(jac[1], jac[2])
+       end
+julia> f(x, y) = exp(-x^2 - y^2)
+julia> g(r, θ) = f(x(r, θ), y(r, θ)) * (det(J(r, θ))) # 変数変換 * ヤコビ行列式
+julia> g(rθ) = g(rθ[1], rθ[2]) # `hcubature` 関数が受け付けるようにする.
+julia> 積分, _ = hcubature(g, [0, 0], [5, 2π]) # r ∈ [0, 5], θ ∈ [0,  2π]
+julia> @assert 積分 ≈ π # 右辺は円周率
 ```
 
 ---
@@ -137,11 +158,11 @@ class: center, middle
 - 素直に Julia で実装すると次のようになる:
 
 ```julia
-julia> using Zygote, QuadGK, LinearAlgebra, StaticArrays
+julia> using Zygote, QuadGK, LinearAlgebra
 julia> const r = 2.
 julia> p(t) = [r * cos(t), r * sin(t)]
 julia> ṗ(t) = jacobian(p, t)[begin] # 戻り値が length=1 の Tuple で来るので中身を取り出す.
-julia> s(t) = quadgk(t̃->sqrt(ṗ(t̃)[1]^2+ṗ(t̃)[2]^2), 0, t)[begin] # 積分を実行
+julia> s(t) = quadgk(t̃->norm(ṗ(t̃)), 0, t)[begin] # 積分を実行
 julia> t = π # \pi + tab で補完
 julia> @assert s(t) == r * t
 ```
@@ -227,12 +248,14 @@ KdV 方程式 <img src=https://user-images.githubusercontent.com/16760547/130854
 
 ```julia
 julia> using Zygote
-julia> const c = 1
+julia> const c = 2
 julia> const θ = 6
 julia> u(x, t) = (c/2)*(sech(√c / 2 * (x - c * t - θ)))^2
 julia> ∂ₓu(x, t) = gradient(u, x, t)[begin] # \partial + tab + \_t + tab
 julia> ∂ₜu(x, t) = gradient(u, x, t)[end]
-julia> ∂²ₓu(x, t) = gradient(∂ₓu, x, t) # \partial + tab + \^2 + tab
-julia> ∂³ₓu(x, t) = gradient(∂²ₓu, x, t) # \partial + tab + \^3 + tab
+julia> ∂²ₓu(x, t) = gradient(∂ₓu, x, t)[begin] # \partial + tab + \^2 + tab
+julia> ∂³ₓu(x, t) = gradient(∂²ₓu, x, t)[begin] # \partial + tab + \^3 + tab
+julia> ∂ₓu(1., 1.)
+julia> ∂²ₓu(1., 1.)
 julia> ∂³ₓu(1., 1.) # 永遠に JIT コンパイルしている.
 ```
