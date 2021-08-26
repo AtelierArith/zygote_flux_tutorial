@@ -1,0 +1,44 @@
+name: Push to ipynb-zoo branch
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+    paths:
+      - "notebooks/**"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Install python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+    - name: Install dependencies for Python
+      run: pip install matplotlib numpy jupytext jupyter
+    - name: Install Julia
+      uses: julia-actions/setup-julia@v1
+      with:
+        version: 1.6.2
+    - name: Install dependencies for Julia
+      run: |
+        julia -e 'using Pkg; Pkg.instantiate();'
+    - name: generate Remark slideshow
+      run: make slideshow
+    - name: copy to artifacts
+      run: |
+        cp -r ./slideshow/build ./artifacts
+    - name: Deploy website
+      if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+      uses: JamesIves/github-pages-deploy-action@releases/v3
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: gh-pages
+        FOLDER: ./artifacts
