@@ -14,6 +14,8 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      JULIA_PROJECT: '@.'
     steps:
     - name: Checkout
       uses: actions/checkout@v2
