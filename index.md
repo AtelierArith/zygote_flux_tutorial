@@ -68,7 +68,7 @@ class: center, middle
   * Julia では次のように計算できる.
 
 
-```julia:repl
+```julia
 julia> using Zygote # おまじない
 julia> f(x) = x^2 + x # ユーザーによって定義された関数
 julia> df(x) = 2x + 1 # 理論上こうなってほしい.
@@ -82,10 +82,49 @@ julia> @assert f'(3) == df(3) == 7
       * もちろん人類は $g'(x) = \exp(f(x)) f'(x)$ であることを知っている.
 
 
-```julia:repl
+```julia
 julia> g(x) = exp(f(x)) # 上の REPL の続き
 julia> dg(x) = exp(f(x)) * f'(x) # 理論上こうなる
 julia> @assert g'(3) == dg(3) == 1.1392835399330275e6
+```
+
+
+---
+
+
+
+
+
+
+## `f'` の `'`って何？
+
+
+実は `'` は `Base.adjoint` 関数の役割を担う.
+
+
+ドキュメントレベルでは [Punctuation](https://docs.julialang.org/en/v1/base/punctuation/#Punctuation) に説明されている:
+
+
+> `'` a trailing apostrophe is the adjoint (that is, the complex transpose) operator Aᴴ
+
+
+
+ソースコードレベルでは
+
+
+Julia本体のリポジトリ [base/operators.jl](https://github.com/JuliaLang/julia/blob/v1.6.2/base/operators.jl#L569) で確認できる:
+
+
+```julia
+const var"'" = adjoint
+```
+
+
+関数に対する `adjoint(f)` の振る舞いは [Zygote.jl/src/compiler/interface.jl](https://github.com/FluxML/Zygote.jl/blob/v0.6.20/src/compiler/interface.jl#L79) で次のように実装されている:
+
+
+```julia
+Base.adjoint(f::Function) = x -> gradient(f, x)[1]
 ```
 
 
@@ -105,12 +144,12 @@ julia> @assert g'(3) == dg(3) == 1.1392835399330275e6
   * Julia では次のように計算する
 
 
-```julia:repl
+```julia
 julia> using Zygote
-julia> f(x, y, z) = x　*　y　*　z
+julia> f(x, y, z) = x　*　y　*　z # もう後がない。助けてくれ
 julia> ∇f(x, y, z) = (y * z, z * x, x * y) # ∇ は \nabla + tab キーで入力できる
-julia> # x = 3, y = 4, z = 5 での勾配を計算する
-julia> @assert gradient(f, 3, 4, 5) == ∇f(3, 4, 5) == (20, 15, 12)
+julia> x = 3, y = 5, z = 7 # magnum
+julia> @assert gradient(f, 3, 5, 7) == ∇f(3, 5, 7) == (35, 21, 15)
 ```
 
 
@@ -130,24 +169,24 @@ julia> @assert gradient(f, 3, 4, 5) == ∇f(3, 4, 5) == (20, 15, 12)
 $$ \frac{\partial}{\partial X} \det X  = \det(X) (X^\top)^{-1} $$
 
 
-```julia:repl
+```julia
 julia> using Zygote, SymPy, LinearAlgebra
 julia> @vars x11 x12 x13 real=true
 julia> @vars x21 x22 x23 real=true
 julia> @vars x31 x32 x33 real=true
-julia> X = [x11 x12 x13; x21 x22 x23; x31 x32 x33]
-julia> X = [x11 x12 x13; x21 x22 x23; x31 x32 x33]
+julia> X = [x11 x12 x13; x21 x22 x23; x31 x32 x33] # SymPy オブジェクトを成分とする行列
 3×3 Matrix{Sym}:
  x₁₁  x₁₂  x₁₃
  x₂₁  x₂₂  x₂₃
  x₃₁  x₃₂  x₃₃
-
 julia> gradient(det, X)[begin] # 要素数が 1 の Tuple で返ってるので中身を取り出す.
 3×3 Matrix{Sym}:
   x₂₂⋅x₃₃ - x₂₃⋅x₃₂  -x₂₁⋅x₃₃ + x₂₃⋅x₃₁   x₂₁⋅x₃₂ - x₂₂⋅x₃₁
  -x₁₂⋅x₃₃ + x₁₃⋅x₃₂   x₁₁⋅x₃₃ - x₁₃⋅x₃₁  -x₁₁⋅x₃₂ + x₁₂⋅x₃₁
   x₁₂⋅x₂₃ - x₁₃⋅x₂₂  -x₁₁⋅x₂₃ + x₁₃⋅x₂₁   x₁₁⋅x₂₂ - x₁₂⋅x₂₁
 julia> @assert gradient(det, X)[begin] == det(X) * inv(X')
+julia> X = rand(3, 3); # もちろん入力が数値の場合でもOK
+julia> @assert gradient(det, X)[begin] ≈ det(X) * inv(X')
 ```
 
 
@@ -170,7 +209,7 @@ julia> @assert gradient(det, X)[begin] == det(X) * inv(X')
   * Julia だと次のようにする:
 
 
-```julia:repl
+```julia
 julia> using Zygote
 julia> x(r, θ) = r * cos(θ); y(r, θ) = r * sin(θ)
 julia> f(x, y) = [x, y]; g(r, θ) = f(x(r, θ), y(r, θ))
@@ -201,7 +240,7 @@ julia> @assert J_zygote ≈ J_theoretical
 ついでに $\iint\exp(-x^2-y^2)dxdy=\pi$ を極座標表示による変数変換後で積分を行うことで確認してみよう.
 
 
-```julia:repl
+```julia
 julia> using LinearAlgebra, Zygote, HCubature
 julia> x(r, θ) = r * cos(θ); y(r, θ) = r * sin(θ)
 julia> Φ(r, θ) = [x(r,θ), y(r, θ)]
@@ -236,18 +275,18 @@ julia> @assert 積分 ≈ π # 右辺は円周率
   * 素直に Julia で実装すると次のようになる:
 
 
-```julia:repl
+```julia
 julia> using Zygote, QuadGK, LinearAlgebra
 julia> const r = 2.
-julia> p(t) = [r * cos(t), r * sin(t)]
-julia> ṗ(t) = jacobian(p, t)[begin] # 戻り値が length=1 の Tuple で来るので中身を取り出す.
-julia> s(t) = quadgk(t̃->norm(ṗ(t̃)), 0, t)[begin] # 積分を実行
+julia> c(t) = [r * cos(t), r * sin(t)]
+julia> ċ(t) = jacobian(c, t)[begin] # 戻り値が length=1 の Tuple で来るので中身を取り出す.
+julia> s(t) = quadgk(t̃->norm(ċ(t̃)), 0, t)[begin] # 積分を実行
 julia> t = π # \pi + tab で補完
 julia> @assert s(t) == r * t
 ```
 
 
-  * 上記のコードに続いて $s'(t)$ を計算できるとカッコいいところ見せられたが, エラーが生じて動作しない.
+  * 上記のコードに続いて $\dot{s}(t)$ を計算できるとカッコいいが, 残念ながらエラーが生じて動作しない.
 
 
 ---
@@ -260,7 +299,7 @@ julia> @assert s(t) == r * t
 # Application: Vector fields
 
 
-```julia:repl
+```julia
 julia> # 前のページの続き
 julia> using Plots
 julia> t_range = 0:0.5:2π
@@ -283,13 +322,13 @@ julia> quiver!(
 
 
 
-# Usage: Hessian matrix part 1
+# Usage: Hessian matrix
 
 
   * どうせなので二階微分もしましょう.
 
 
-```julia:repl
+```julia
 julia> using Zygote
 julia> f(x) = 3^x
 julia> df(x) = log(3) * 3^x; ddf(x) = log(3)^2 * 3^x
@@ -301,7 +340,7 @@ julia> @assert f''(x) ≈ ddf(x)
   * ヘッセ行列 (Hessian matrix) も作れます.
 
 
-```julia:repl
+```julia
 julia> using Zygote
 julia> f(x, y) = sin(x - y)
 julia> f(xy) = f(xy[1], xy[2])
@@ -322,7 +361,7 @@ julia> @assert h_theoretical ≈ h_zygote
 
 
 
-# Usage: Hessian matrix part 2
+# Application: 1-Soliton
 
 
 高階偏導関数の計算
@@ -331,7 +370,7 @@ julia> @assert h_theoretical ≈ h_zygote
 KdV 方程式 <img src=https://user-images.githubusercontent.com/16760547/130854677-b6eef6d5-97cc-4374-afff-a8ebbf772de9.gif /> の解として <img src=https://user-images.githubusercontent.com/16760547/130854649-2bbe7a0a-49ea-4061-8ef7-e99ff7529d61.gif width="400"/> なるものが知られている.
 
 
-```julia:repl
+```julia
 julia> using Zygote
 julia> const c = 2
 julia> const θ = 6
@@ -356,6 +395,33 @@ julia> @assert abs(∂ₜu(x, t) + 6u(x,t)*∂ₓu(x,t) + ∂³ₓu(x, t)) <  ep
 
 
 
+# Appendix: 1-Soliton の可視化
+
+
+```julia
+julia> using Plots
+julia> const c = 2; const θ = 6
+julia> u(x, t) = (c/2)*(sech(√c / 2 * (x - c * t - θ)))^2
+julia> anim = @animate for t in 0:0.1:2
+           plot(x->u(x, t), ylim=[0, 1.5], xlim=[2, 15])
+       end
+julia> gif(anim, "1soliton.gif")
+```
+
+
+<img src=https://user-images.githubusercontent.com/16760547/131127011-0d86a61f-de6a-4fe9-af6e-2cdaddad5592.gif height=300/>
+
+
+---
+
+
+---
+
+
+
+
+
+
 # Usage: Structs and Types
 
 
@@ -365,7 +431,7 @@ julia> @assert abs(∂ₜu(x, t) + 6u(x,t)*∂ₓu(x,t) + ∂³ₓu(x, t)) <  ep
 <img src=https://user-images.githubusercontent.com/16760547/130832819-981b2c03-2e13-4156-b69d-70447510c5a9.gif height="120"  hspace="100"/> <img src=https://user-images.githubusercontent.com/16760547/130833654-c4bb6345-4593-4dc6-8dba-2aa0c707e99a.gif height="60"/>
 
 
-```julia:repl
+```julia
 julia> using Zygote
 julia> struct Affine
            W # weight matrix
@@ -396,6 +462,7 @@ julia> @assert gs[b] == ones(2)
 
 
   * Julia の中で定義した関数の微分は `using Zygote` を詠唱し適切な関数を呼び出すことで導関数を使うことができてしまった.
+  * 他の Julia パッケージと連携して使う例も紹介した.
 
 
 ---
@@ -426,7 +493,7 @@ class: center, middle
       * 例えば $a$, $b$ がパラメータとし入力データ $x$ に対して得られた $ax + b$ のパラメータに関する偏微分を求めたい.
 
 
-```julia:repl
+```julia
 julia> using Zygote, SymPy
 julia> @vars a b real=true
 julia> x = 999
@@ -455,7 +522,7 @@ julia> @assert gs[b] == 1
   * SymPy でやったことを [SymEngine.jl](https://github.com/symengine/SymEngine.jl) を使ってでもできる.
 
 
-```julia:repl
+```julia
 julia> using Zygote, SymEngine
 julia> Base.adjoint(x::Basic) = x # おまじない
 julia> @vars a b
@@ -469,36 +536,5 @@ julia> gs = gradient(Params([a, b])) do
        end
 julia> @assert gs[a] == x == 999
 julia> @assert gs[b] == 1
-```
-
-
----
-
-
-
-
-
-
-# Appendix: 高階偏導関数の計算
-
-
-KdV 方程式 <img src=https://user-images.githubusercontent.com/16760547/130854677-b6eef6d5-97cc-4374-afff-a8ebbf772de9.gif /> の解として <img src=https://user-images.githubusercontent.com/16760547/130854649-2bbe7a0a-49ea-4061-8ef7-e99ff7529d61.gif width="400"/> なるものが知られている.
-
-
-```julia:repl
-julia> using Zygote
-julia> const c = 2
-julia> const θ = 6
-julia> u(x, t) = (c/2)*(sech(√c / 2 * (x - c * t - θ)))^2
-julia> ∂ₓu(x, t) = gradient(u, x, t)[begin] # \partial + tab + \_t + tab
-julia> ∂ₜu(x, t) = gradient(u, x, t)[end]
-julia> ∂²ₓu(x, t) = gradient(∂ₓu, x, t)[begin] # \partial + tab + \^2 + tab
-julia> ∂³ₓu(x, t) = gradient(∂²ₓu, x, t)[begin] # この定義は失敗する
-julia> ∂³ₓu(x, t) = hessian(xt -> ∂ₓu(xt[1], xt[2]), [x, t])[1, 1] # こっちにするとうまくいく
-julia> ∂ₓu(1., 1.) # 試運転
-julia> ∂²ₓu(1., 1.) # ちょっと時間がかかる
-julia> ∂³ₓu(1., 1.) # 気長に待つ
-julia> x, t = rand(), rand()
-julia> @assert abs(∂ₜu(x, t) + 6u(x,t)*∂ₓu(x,t) + ∂³ₓu(x, t)) <  eps(Float64) # 左辺は非常に小さい数になっている.
 ```
 
