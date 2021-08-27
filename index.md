@@ -415,9 +415,6 @@ julia> gif(anim, "1soliton.gif")
 ---
 
 
----
-
-
 
 
 
