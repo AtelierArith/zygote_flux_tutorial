@@ -286,10 +286,6 @@ julia> gif(anim, "1soliton.gif")
 
 ---
 
-
-
----
-
 # Usage: Structs and Types
 
 構造体のフィールドオブジェクトを変数と見た時の微分もできる:
