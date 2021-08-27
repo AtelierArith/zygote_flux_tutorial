@@ -57,10 +57,10 @@ julia> @assert g'(3) == dg(3) == 1.1392835399330275e6
 
 ```julia:repl
 julia> using Zygote
-julia> f(x, y, z) = x　*　y　*　z
+julia> f(x, y, z) = x　*　y　*　z # もう後がない。助けてくれ
 julia> ∇f(x, y, z) = (y * z, z * x, x * y) # ∇ は \nabla + tab キーで入力できる
-julia> # x = 3, y = 4, z = 5 での勾配を計算する
-julia> @assert gradient(f, 3, 4, 5) == ∇f(3, 4, 5) == (20, 15, 12)
+julia> x = 3, y = 5, z = 7 # magnum
+julia> @assert gradient(f, 3, 5, 7) == ∇f(3, 5, 7) == (35, 21, 15)
 ```
 
 ---
@@ -79,8 +79,7 @@ julia> using Zygote, SymPy, LinearAlgebra
 julia> @vars x11 x12 x13 real=true
 julia> @vars x21 x22 x23 real=true
 julia> @vars x31 x32 x33 real=true
-julia> X = [x11 x12 x13; x21 x22 x23; x31 x32 x33]
-julia> X = [x11 x12 x13; x21 x22 x23; x31 x32 x33]
+julia> X = [x11 x12 x13; x21 x22 x23; x31 x32 x33] # SymPy オブジェクトを成分とする行列
 3×3 Matrix{Sym}:
  x₁₁  x₁₂  x₁₃
  x₂₁  x₂₂  x₂₃
@@ -92,6 +91,8 @@ julia> gradient(det, X)[begin] # 要素数が 1 の Tuple で返ってるので�
  -x₁₂⋅x₃₃ + x₁₃⋅x₃₂   x₁₁⋅x₃₃ - x₁₃⋅x₃₁  -x₁₁⋅x₃₂ + x₁₂⋅x₃₁
   x₁₂⋅x₂₃ - x₁₃⋅x₂₂  -x₁₁⋅x₂₃ + x₁₃⋅x₂₁   x₁₁⋅x₂₂ - x₁₂⋅x₂₁
 julia> @assert gradient(det, X)[begin] == det(X) * inv(X')
+julia> X = rand(3, 3); # もちろん入力が数値の場合でもOK
+julia> @assert gradient(det, X)[begin] ≈ det(X) * inv(X')
 ```
 ---
 
