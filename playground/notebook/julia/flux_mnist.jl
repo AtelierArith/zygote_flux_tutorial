@@ -16,6 +16,7 @@
 using Flux
 using Flux.Data: DataLoader
 using MLDatasets
+ENV["DATADEPS_ALWAYS_ACCEPT"] = true
 
 # +
 xtrain, ytrain = MLDatasets.MNIST.traindata(Float32)
