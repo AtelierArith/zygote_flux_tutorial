@@ -5,7 +5,7 @@
 
 # About this repository
 
-- Julia in Physics 2021 Online に向けて作成した資料置き場.
+- [Julia in Physics 2021 Online](https://akio-tomiya.github.io/julia_in_physics/) に向けて作成した資料置き場.
 
 # Usage
 
