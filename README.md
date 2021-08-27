@@ -7,6 +7,9 @@
 
 - [Julia in Physics 2021 Online](https://akio-tomiya.github.io/julia_in_physics/) に向けて作成した資料置き場.
 
+- 概要: 関数に対しその導関数を数値計算する自動微分は今日の機械学習・深層学習において重要な要素技術になっている. 本チュートリアルでは自動微分をサポートする Zygote.jl を紹介する. さらにその上に構築されている機械学習ライブラリとして Flux.jl を紹介する.
+
+
 # Usage
 
 ## Install Jupyter notebook
