@@ -40,6 +40,7 @@ jobs:
       run: |
         cp -r ./slideshow/build ./artifacts
         cp playground/notebook/julia/*.html ./artifacts
+        zip -r artifacts.zip artifacts
     - name: Deploy website
       if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
       uses: JamesIves/github-pages-deploy-action@releases/v3
@@ -47,3 +48,12 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         BRANCH: gh-pages
         FOLDER: ./artifacts
+    - name: Push to tag named artifacts
+      uses: ncipollo/release-action@v1
+      if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+      with:
+        allowUpdates: true
+        omitBodyDuringUpdate: true
+        tag: artifacts/latest
+        artifacts: "./artifacts.zip"
+        token: ${{ secrets.GITHUB_TOKEN }}
