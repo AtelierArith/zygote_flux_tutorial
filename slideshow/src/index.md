@@ -348,14 +348,14 @@ julia> nclasses = 10
 julia> W, H, inC = (28, 28, 1)
 julia> out_conv_size = (W ÷ 4 - 3, H ÷ 4 - 3, 16)
 julia> model = Chain(
-      Conv((5, 5), inC => 6, relu),
-      MaxPool((2, 2)),
-      Conv((5, 5), 6 => 16, relu),
-      MaxPool((2, 2)),
-      flatten,
-      Dense(prod(out_conv_size), 120, relu),
-      Dense(120, 84, relu),
-      Dense(84, nclasses),
+          Conv((5, 5), inC => 6, relu),
+          MaxPool((2, 2)),
+          Conv((5, 5), 6 => 16, relu),
+          MaxPool((2, 2)),
+          flatten,
+          Dense(prod(out_conv_size), 120, relu),
+          Dense(120, 84, relu),
+          Dense(84, nclasses),
     )
 julia> model = f32(model) # パラメータの重みを Float32 にする
 ```
@@ -452,3 +452,24 @@ julia> @assert gs[a] == x == 999
 julia> @assert gs[b] == 1
 ```
 
+---
+
+# Appendix: 良い Julia 教材
+
+- [Quantitative Economics with Julia](https://julia.quantecon.org/index_toc.html)
+- [JuliaCon YouTube 動画](https://www.youtube.com/results?search_query=Juliacon)
+- [Introduction to Computational Thinking](https://computationalthinking.mit.edu/Spring21/)
+- [Think Julia: How to Think Like a Computer Scientist](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html)
+
+---
+
+# Appendix: 困ったら？
+
+- エラーメッセージをキーワードにググる
+- Twitter で聞く `#Julia言語`
+- [Julia Discourse](https://discourse.julialang.org/) で聞く
+- ライブラリのバグであればライブラリを管理するリポジトリの Issue に報告
+- Julia 本家の Slack で相談
+- 計算機科学そのものを勉強する（リテラシーを身につけるという意味）
+- ソフトウェア開発における良いプラクティスを学ぶこと
+- 良いコードとは何かについて自分なりの哲学を持つこと
