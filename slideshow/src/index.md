@@ -24,6 +24,12 @@ class: center, middle
 
 ---
 
+class: center, middle
+
+# Zygote.jl のお話
+
+---
+
 # Usage: Univariate function
 
 - 関数 $f(x) = x^2 + x$ に対して導関数 $f'(x)$ を求めたい. 
@@ -317,6 +323,78 @@ julia> @assert gs[b] == ones(2)
 
 - Julia の中で定義した関数の微分は `using Zygote` を詠唱し適切な関数を呼び出すことで導関数を使うことができてしまった.
 - 他の Julia パッケージと連携して使う例も紹介した.
+
+---
+
+class: center, middle
+
+# Flux.jl のお話
+
+ MNIST の学習を通して
+
+---
+
+# Building models
+
+`Chain` というもので基本的なレイヤーを並べてモデルを作ることができる.
+
+```julia
+julia> using Flux
+julia> nclasses = 10
+julia> W, H, inC = (28, 28, 1)
+julia> out_conv_size = (W ÷ 4 - 3, H ÷ 4 - 3, 16)
+julia> model = Chain(
+      Conv((5, 5), inC => 6, relu),
+      MaxPool((2, 2)),
+      Conv((5, 5), 6 => 16, relu),
+      MaxPool((2, 2)),
+      flatten,
+      Dense(prod(out_conv_size), 120, relu),
+      Dense(120, 84, relu),
+      Dense(84, nclasses),
+    )
+julia> model = f32(model) # パラメータの重みを Float32 にする
+```
+
+---
+
+# DataLoader
+
+MNIST データセットを用意
+
+```julia
+julia> using Flux
+julia> using Flux.Data: DataLoader
+julia> using MLDatasets
+julia> xtrain, ytrain = MLDatasets.MNIST.traindata(Float32)
+julia> xtest, ytest = MLDatasets.MNIST.testdata(Float32)
+julia> xtrain = Flux.unsqueeze(xtrain, 3)
+julia> xtest = Flux.unsqueeze(xtest, 3)
+julia> ytrain = Flux.onehotbatch(ytrain, 0:9)
+julia> ytest = Flux.onehotbatch(ytest, 0:9)
+julia> train_loader = DataLoader((xtrain, ytrain), batchsize=128, shuffle=true)
+julia> test_loader = DataLoader((xtest, ytest),  batchsize=128)
+```
+
+---
+
+# Training models
+
+
+```julia
+julia> ps = Flux.params(model) # モデルのパラメータを取得
+jluia> opt = ADAM(0.01) # 最適化アルゴリズムを選択
+jluia> loss(x, y) = Flux.Losses.logitcrossentropy(model(x), y) # 損失関数の定義
+julia> Flux.@epochs 5 Flux.train!(loss, ps, train_loader, opt) # 5 epoch ぶん回す
+jluia> println("acc ", 100 * sum(Flux.onecold(model(xtest)) .== Flux.onecold(ytest)) / size(ytest, 2), "%")
+acc98.54%
+```
+
+--- 
+
+# Flux.jl まとめ
+
+意外と簡単に作れる.
 
 ---
 
