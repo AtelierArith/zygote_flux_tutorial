@@ -324,6 +324,10 @@ julia> @assert gs[b] == ones(2)
 - Julia の中で定義した関数の微分は `using Zygote` を詠唱し適切な関数を呼び出すことで導関数を使うことができてしまった.
 - 他の Julia パッケージと連携して使う例も紹介した.
 
+## もう少し内部のことを知りたい場合は
+
+- [この資料をご覧ください](zygote_internals.html)
+
 ---
 
 class: center, middle
@@ -395,6 +399,8 @@ acc98.54%
 # Flux.jl まとめ
 
 意外と簡単に作れる.
+
+- [もう少し詳しい資料はこちら](flux_mnist.html)
 
 ---
 
