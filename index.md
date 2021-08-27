@@ -68,7 +68,7 @@ class: center, middle
   * Julia では次のように計算できる.
 
 
-```julia
+```julia:repl
 julia> using Zygote # おまじない
 julia> f(x) = x^2 + x # ユーザーによって定義された関数
 julia> df(x) = 2x + 1 # 理論上こうなってほしい.
@@ -82,7 +82,7 @@ julia> @assert f'(3) == df(3) == 7
       * もちろん人類は $g'(x) = \exp(f(x)) f'(x)$ であることを知っている.
 
 
-```julia
+```julia:repl
 julia> g(x) = exp(f(x)) # 上の REPL の続き
 julia> dg(x) = exp(f(x)) * f'(x) # 理論上こうなる
 julia> @assert g'(3) == dg(3) == 1.1392835399330275e6
@@ -105,12 +105,49 @@ julia> @assert g'(3) == dg(3) == 1.1392835399330275e6
   * Julia では次のように計算する
 
 
-```julia
+```julia:repl
 julia> using Zygote
 julia> f(x, y, z) = x　*　y　*　z
 julia> ∇f(x, y, z) = (y * z, z * x, x * y) # ∇ は \nabla + tab キーで入力できる
 julia> # x = 3, y = 4, z = 5 での勾配を計算する
 julia> @assert gradient(f, 3, 4, 5) == ∇f(3, 4, 5) == (20, 15, 12)
+```
+
+
+---
+
+
+
+
+
+
+# Application:
+
+
+  * 正方行列 $X$ に対して行列式 $\det X$ を計算することは $X$ 第 $(i, j)$の成分 $x_{ij}$ 達を変数として見た時の多変数関数とみなせ, 次が成り立つ.
+
+
+$$ \frac{\partial}{\partial X} \det X  = \det(X) (X^\top)^{-1} $$
+
+
+```julia:repl
+julia> using Zygote, SymPy, LinearAlgebra
+julia> @vars x11 x12 x13 real=true
+julia> @vars x21 x22 x23 real=true
+julia> @vars x31 x32 x33 real=true
+julia> X = [x11 x12 x13; x21 x22 x23; x31 x32 x33]
+julia> X = [x11 x12 x13; x21 x22 x23; x31 x32 x33]
+3×3 Matrix{Sym}:
+ x₁₁  x₁₂  x₁₃
+ x₂₁  x₂₂  x₂₃
+ x₃₁  x₃₂  x₃₃
+
+julia> gradient(det, X)[begin] # 要素数が 1 の Tuple で返ってるので中身を取り出す.
+3×3 Matrix{Sym}:
+  x₂₂⋅x₃₃ - x₂₃⋅x₃₂  -x₂₁⋅x₃₃ + x₂₃⋅x₃₁   x₂₁⋅x₃₂ - x₂₂⋅x₃₁
+ -x₁₂⋅x₃₃ + x₁₃⋅x₃₂   x₁₁⋅x₃₃ - x₁₃⋅x₃₁  -x₁₁⋅x₃₂ + x₁₂⋅x₃₁
+  x₁₂⋅x₂₃ - x₁₃⋅x₂₂  -x₁₁⋅x₂₃ + x₁₃⋅x₂₁   x₁₁⋅x₂₂ - x₁₂⋅x₂₁
+julia> @assert gradient(det, X)[begin] == det(X) * inv(X')
 ```
 
 
@@ -133,19 +170,19 @@ julia> @assert gradient(f, 3, 4, 5) == ∇f(3, 4, 5) == (20, 15, 12)
   * Julia だと次のようにする:
 
 
-```julia
+```julia:repl
 julia> using Zygote
 julia> x(r, θ) = r * cos(θ); y(r, θ) = r * sin(θ)
 julia> f(x, y) = [x, y]; g(r, θ) = f(x(r, θ), y(r, θ))
 julia> (r, θ) = (2, π/6)
 julia> J_zygote = hcat(jacobian(g, r, θ)...)
+2×2 Matrix{Float64}:
+ 0.866025  -1.0
+ 0.5        1.73205
 julia> J_theoretical = [ 
             cos(θ)  -r * sin(θ)
             sin(θ)  r * cos(θ)
         ]
-2×2 Matrix{Float64}:
- 0.866025  -1.0
- 0.5        1.73205
 
 julia> @assert J_zygote ≈ J_theoretical
 ```
@@ -164,7 +201,7 @@ julia> @assert J_zygote ≈ J_theoretical
 ついでに $\iint\exp(-x^2-y^2)dxdy=\pi$ を極座標表示による変数変換後で積分を行うことで確認してみよう.
 
 
-```julia
+```julia:repl
 julia> using LinearAlgebra, Zygote, HCubature
 julia> x(r, θ) = r * cos(θ); y(r, θ) = r * sin(θ)
 julia> Φ(r, θ) = [x(r,θ), y(r, θ)]
@@ -199,7 +236,7 @@ julia> @assert 積分 ≈ π # 右辺は円周率
   * 素直に Julia で実装すると次のようになる:
 
 
-```julia
+```julia:repl
 julia> using Zygote, QuadGK, LinearAlgebra
 julia> const r = 2.
 julia> p(t) = [r * cos(t), r * sin(t)]
@@ -223,7 +260,7 @@ julia> @assert s(t) == r * t
 # Application: Vector fields
 
 
-```julia
+```julia:repl
 julia> # 前のページの続き
 julia> using Plots
 julia> t_range = 0:0.5:2π
@@ -252,7 +289,7 @@ julia> quiver!(
   * どうせなので二階微分もしましょう.
 
 
-```julia
+```julia:repl
 julia> using Zygote
 julia> f(x) = 3^x
 julia> df(x) = log(3) * 3^x; ddf(x) = log(3)^2 * 3^x
@@ -264,7 +301,7 @@ julia> @assert f''(x) ≈ ddf(x)
   * ヘッセ行列 (Hessian matrix) も作れます.
 
 
-```julia
+```julia:repl
 julia> using Zygote
 julia> f(x, y) = sin(x - y)
 julia> f(xy) = f(xy[1], xy[2])
@@ -294,7 +331,7 @@ julia> @assert h_theoretical ≈ h_zygote
 KdV 方程式 <img src=https://user-images.githubusercontent.com/16760547/130854677-b6eef6d5-97cc-4374-afff-a8ebbf772de9.gif /> の解として <img src=https://user-images.githubusercontent.com/16760547/130854649-2bbe7a0a-49ea-4061-8ef7-e99ff7529d61.gif width="400"/> なるものが知られている.
 
 
-```julia
+```julia:repl
 julia> using Zygote
 julia> const c = 2
 julia> const θ = 6
@@ -328,7 +365,7 @@ julia> @assert abs(∂ₜu(x, t) + 6u(x,t)*∂ₓu(x,t) + ∂³ₓu(x, t)) <  ep
 <img src=https://user-images.githubusercontent.com/16760547/130832819-981b2c03-2e13-4156-b69d-70447510c5a9.gif height="120"  hspace="100"/> <img src=https://user-images.githubusercontent.com/16760547/130833654-c4bb6345-4593-4dc6-8dba-2aa0c707e99a.gif height="60"/>
 
 
-```julia
+```julia:repl
 julia> using Zygote
 julia> struct Affine
            W # weight matrix
@@ -389,7 +426,7 @@ class: center, middle
       * 例えば $a$, $b$ がパラメータとし入力データ $x$ に対して得られた $ax + b$ のパラメータに関する偏微分を求めたい.
 
 
-```julia
+```julia:repl
 julia> using Zygote, SymPy
 julia> @vars a b real=true
 julia> x = 999
@@ -418,7 +455,7 @@ julia> @assert gs[b] == 1
   * SymPy でやったことを [SymEngine.jl](https://github.com/symengine/SymEngine.jl) を使ってでもできる.
 
 
-```julia
+```julia:repl
 julia> using Zygote, SymEngine
 julia> Base.adjoint(x::Basic) = x # おまじない
 julia> @vars a b
@@ -448,7 +485,7 @@ julia> @assert gs[b] == 1
 KdV 方程式 <img src=https://user-images.githubusercontent.com/16760547/130854677-b6eef6d5-97cc-4374-afff-a8ebbf772de9.gif /> の解として <img src=https://user-images.githubusercontent.com/16760547/130854649-2bbe7a0a-49ea-4061-8ef7-e99ff7529d61.gif width="400"/> なるものが知られている.
 
 
-```julia
+```julia:repl
 julia> using Zygote
 julia> const c = 2
 julia> const θ = 6
