@@ -39,6 +39,7 @@ jobs:
     - name: copy to artifacts
       run: |
         cp -r ./slideshow/build ./artifacts
+        cp playground/notebook/julia/*.html ./artifacts
     - name: Deploy website
       if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
       uses: JamesIves/github-pages-deploy-action@releases/v3
