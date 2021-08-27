@@ -402,6 +402,8 @@ x = rand()
 @assert mygradient(poly, x) ≈ (poly)'(x) ≈ 6x + 2
 # -
 
+# - できたんジェントシータピオカ！(できた！)
+
 # ### まとめ 
 #
 # - Zygote.jl の内部でやっていることの説明についてのべた
