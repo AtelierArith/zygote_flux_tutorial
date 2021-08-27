@@ -5,4 +5,4 @@ slideshow:
 
 notebook:
 	jupytext --to ipynb playground/notebook/julia/*.jl --execute
-	jupyter nbconvert --to html
+	jupyter nbconvert --to html playground/notebook/julia/*.ipynb
