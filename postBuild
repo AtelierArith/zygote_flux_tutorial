@@ -1,2 +1,2 @@
-conda install -y jupytext sympy
+conda install -y jupytext sympy scipy
 julia -e 'ENV["JUPYTER"]=Sys.which("jupyter"); using Pkg; Pkg.build("IJulia"); using IJulia'
