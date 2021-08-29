@@ -43,6 +43,7 @@ julia> using Pkg; Pkg.activate("."); Pkg.instantiate()
 ## Generate slide
 
 ```console
+$ cd path/to/this/repository
 $ julia --project=@. -e 'using Remark; Remark.slideshow("slideshow", options = Dict("ratio" => "16:9"), title = "Zygote+Flux+etc")'
 $ julia --project=@. -e 'using LiveServer; serve(dir="slideshow/build")'
 ```
