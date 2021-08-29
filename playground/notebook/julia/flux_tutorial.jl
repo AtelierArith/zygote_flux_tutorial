@@ -363,3 +363,7 @@ plot!(p, t->q(t), xlim=[0,8], legend=:topleft, label="q") # 予測
 #   - `gradient` や `update!` などの使い方は上記で説明したものと同様である.
 #   
 # [See flux_mnist](flux_mnist.ipynb)
+#
+# or 
+#
+# [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/AtelierArith/zygote_flux_tutorial/HEAD?filepath=playground%2Fnotebook%2Fjulia%2Fflux_mnist.jl)

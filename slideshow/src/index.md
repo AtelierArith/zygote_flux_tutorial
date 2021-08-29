@@ -331,6 +331,7 @@ julia> @assert gs[b] == ones(2)
 ## もう少し内部のことを知りたい場合は
 
 - [この資料をご覧ください](zygote_internals.html)
+- or [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/AtelierArith/zygote_flux_tutorial/HEAD?filepath=playground%2Fnotebook%2Fjulia%2Fzygote_internals.jl)
 
 ---
 
@@ -361,6 +362,7 @@ class: center, middle
 
  [ガリレオ落下実験](flux_tutorial.html)
 
+ [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/AtelierArith/zygote_flux_tutorial/HEAD?filepath=playground%2Fnotebook%2Fjulia%2Fflux_tutorial.jl)
 
 ---
 
@@ -442,6 +444,7 @@ acc98.54%
 意外と簡単に作れる.
 
 - [もう少し詳しい資料はこちら](flux_mnist.html)
+- or [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/AtelierArith/zygote_flux_tutorial/HEAD?filepath=playground%2Fnotebook%2Fjulia%2Fflux_mnist.jl)
 
 ---
 
