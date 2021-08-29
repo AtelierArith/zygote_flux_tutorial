@@ -546,6 +546,9 @@ class: center, middle
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/AtelierArith/zygote_flux_tutorial/HEAD?filepath=playground%2Fnotebook%2Fjulia%2Fflux_tutorial.jl)
 
 
+![](assets/flux_tutorial.png)
+
+
 ---
 
 
