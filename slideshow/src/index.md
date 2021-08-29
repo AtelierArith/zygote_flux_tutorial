@@ -2,7 +2,7 @@ class: center, middle
 
 # [Julia in Physics 2021 Online](https://akio-tomiya.github.io/julia_in_physics/)
 
-## Zygote.jl/Flux.jl のお話 <span style="font-size: 50%; color: black;"> + 可視化もあるよ</span>
+## Zygote.jl/Flux.jl のお話</span>
 
 [SatoshiTerasaki](https://terasakisatoshi.github.io/)@[AtelierArith](https://sites.google.com/atelier-arith.jp/atelier-arith)
 
@@ -488,6 +488,26 @@ julia> gs = gradient(Params([a, b])) do
 julia> @assert gs[a] == x == 999
 julia> @assert gs[b] == 1
 ```
+
+---
+
+Appendix: 
+
+- [FluxML/model-zoo](https://github.com/FluxML/model-zoo)
+  - Flux.jl のサンプルコード集
+- [Metalhead.jl](https://github.com/FluxML/Metalhead.jl)
+  - 画像系のモデルを取り扱っている
+- [Torch.jl](https://github.com/FluxML/Torch.jl
+)
+  - PyTorch のレイヤーを Julia で使えるようにする. メンテとまってる？
+
+
+---
+
+# Appendix:
+
+- `using Zygote` でエラーが生じたら `using Pkg; Pkg.add("Zygote")` を使ってインストールする.
+- このスライドのサンプルコードは REPL の上でコピペして使用することができる. `julia>` の部分も含めても良い. REPL 側でいい感じに処理してくれる.
 
 ---
 
