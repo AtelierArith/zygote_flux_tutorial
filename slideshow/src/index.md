@@ -292,6 +292,8 @@ julia> gif(anim, "1soliton.gif")
 
 ---
 
+---
+
 # Usage: Structs and Types
 
 構造体のフィールドオブジェクトを変数と見た時の微分もできる:
@@ -306,8 +308,8 @@ julia> struct Affine
            b # bias vector
        end
 julia> (layer::Affine)(x) = layer.W * x .+ layer.b
-julia> W = rand(2, 3); b = rand(2)
-julia> layer = Affine(W, b); x = rand(3)
+julia> W = rand(2, 3); b = rand(2); layer = Affine(W, b); x = rand(3)
+julia> gs = gradient(() -> sum(layer(x)), Params([W, b])) # 勾配の計算. do-syntax を使っても良い.
 julia> gs = gradient(Params([W, b])) do
            sum(layer(x))
        end
@@ -315,7 +317,7 @@ julia> @assert gs[W] == hcat(x, x)'
 julia> @assert gs[b] == ones(2)
 ```
 
-- このような記法により自動微分の機構と Flux.jl とうまく連携できる.
+- このような記法により自動微分の機構と Flux.jl をうまく連携できる.
 
 ---
 
@@ -334,7 +336,37 @@ class: center, middle
 
 # Flux.jl のお話
 
- MNIST の学習を通して
+---
+
+# Flux.jl
+
+- 自動微分 Zygote.jl の上に構築された機械学習ライブラリ.
+- PyTorch のように深層学習のモデル構築に必要な機能を提供
+  - MLP/CNN などのレイヤーを提供
+  - 最適化アルゴリズム
+  - モデルを GPU リソースを用いて学習することもできる
+- 自前のモデルを構造体として定義しそれを組み合わせることもできる
+
+- 最近の動向は YouTube で確認できる:
+  - [A Tour of the differentiable programming landscape with Flux.jl | Dhairya Gandhi | JuliaCon2021](https://www.youtube.com/watch?v=_UOD4hceFDQ)
+
+
+---
+
+class: center, middle
+
+# Demo
+
+- [もう少し詳しい資料はこちら](flux_tutorial.html)
+
+
+---
+
+class: center, middle
+
+# Flux.jl のお話
+
+MNIST の学習
 
 ---
 
@@ -359,6 +391,10 @@ julia> model = Chain(
     )
 julia> model = f32(model) # パラメータの重みを Float32 にする
 ```
+
+#### Remark
+
+- 多次元配列のデータレイアウトは `(W, H, C)` であることに注意 (インデックスの順番が PyTorch の逆と覚えておけば良い)
 
 ---
 

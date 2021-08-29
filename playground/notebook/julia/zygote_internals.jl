@@ -22,6 +22,8 @@
 
 using Zygote
 
+]st Zygote
+
 # ## 復習
 #
 # 二次関数の微分をすることを考える.

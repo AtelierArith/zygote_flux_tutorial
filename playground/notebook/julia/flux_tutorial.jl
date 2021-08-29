@@ -27,6 +27,8 @@ using Flux
 using Plots
 # -
 
+]st Flux
+
 # ## Flux.jl で何ができるのか？
 #
 # ### 自動微分
@@ -258,19 +260,73 @@ end
 # -
 
 # ### `Flux.Optimise.update!(opt, ps, gs)` がしていること
+#
+# 実際のFlux.jlのコードを元に単純化/変数名を改変したもので説明する.
+#
+# `Flux.Optimise.update!(opt, ps, gs)` を実行することで[次のメソッド](https://github.com/FluxML/Flux.jl/blob/v0.12.6/src/optimise/train.jl#L29-L34)が呼ばれる:
+#
+# ```julia
+# function update!(opt, ps::Params, gs)
+#   for p in ps
+#     update!(opt, p, gs[p]) # ... ★
+#   end
+# end
+# ```
+#
+# `# ... ★` で示した `update!` は[次のメソッド](https://github.com/FluxML/Flux.jl/blob/v0.12.6/src/optimise/train.jl#L23-L27)である:
+#
+# ```julia
+# function update!(opt, p, Δ)
+#   p .-= apply!(opt, p, Δ)
+# end
+# ```
+#
+# 上記のコードで `p` を `p .- apply!(opt, p, Δ)` として置き換えていることがわかる.
+#
+# `apply!` は `opt` の種類(型)によって振る舞いが変わる. ここでは下記のような実装になっている.
+#
+# ```julia
+# mutable struct Descent <: AbstractOptimiser
+#   eta::Float64
+# end
+#
+# function apply!(o::Descent, p, Δ)
+#   Δ .*= o.eta
+# end
+# ```
+#
+# `apply!(opt, p, Δ)` は勾配 `Δ` の `eta` 倍のことである.
+#
+# 以上をまとめると `p ← p - η * Δ` という更新規則を行なっていることがわかる.
+#
+# #### Remark
+# 厳密なコードは
+#
+#   - [Flux.jl/src/optimise/train.jl](https://github.com/FluxML/Flux.jl/blob/v0.12.6/src/optimise/train.jl)
+#   - [Flux.jl/src/optimise/optimisers.jl](https://github.com/FluxML/Flux.jl/blob/v0.12.6/src/optimise/optimisers.jl)
+#   を参照すること
+
+# ## 以上をまとめて実行
+#
+# - 上記の事柄を一つのセルでまとめて実行する.
+# - 学習率は `η = 0.0008` のように十分小さい値を取っている.
 
 # +
+# データの用意
 tdata = [1,2,3,4,5,6,7,8]
 xdata = [1,4,9,16,25,36,49,64]
 
+# セットアップ
 rng = MersenneTwister(1234) # ランダムシードを固定
 a, b, c = rand(rng), rand(rng), rand(rng)
 q = Quadratic([a], [b], [c])
-
-η = 0.0008
+# パラメータを取得
 ps = Flux.params(q)
+η = 0.0008
+# 最適化アルゴリズムを選択
 opt = Descent(η)
 
+# 勾配を計算しパラメータ更新をひたすら繰り返す
 for iter in 1:1000
     gs = gradient(ps) do
                 # loss function
@@ -288,7 +344,22 @@ for iter in 1:1000
 end
 # -
 
+# ひとまず `loss` が小さい値に減少していることがわかる. `ps` の値が概ね `[1, 0, 0]` になっていればOK
+
 ps # 概ね [1, 0, 0] に近い値を出すことができているはず.
+
+# ## 結果を確認
 
 p = scatter(tdata, xdata, label="data") # データー
 plot!(p, t->q(t), xlim=[0,8], legend=:topleft, label="q") # 予測
+
+# # まとめ
+#
+# - 簡単なトイモデルによって自前の機械学習モデルを実装することができた.
+
+# # Appendix 
+#
+# - Flux.jl では MLP/CNN をはじめとする深層学習のモデル構築に必要なレイヤーを提供している
+#   - `gradient` や `update!` などの使い方は上記で説明したものと同様である.
+#   
+# [See flux_mnist](flux_mnist.ipynb)
