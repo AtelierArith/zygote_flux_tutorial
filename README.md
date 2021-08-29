@@ -2,6 +2,7 @@
 
 - [GitHub Page](https://atelierarith.github.io/zygote_flux_tutorial/)
 - [Release Page](https://github.com/AtelierArith/zygote_flux_tutorial/releases/tag/artifacts%2Flatest)
+- [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/AtelierArith/zygote_flux_tutorial/HEAD)
 
 # About this repository
 
