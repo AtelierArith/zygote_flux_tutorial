@@ -16,7 +16,7 @@
 ## Install Jupyter notebook
 
 ```console
-$ pip install jupyter jupytext
+$ pip install jupyter jupytext sympy scipy
 ```
 
 ## Install Julia
