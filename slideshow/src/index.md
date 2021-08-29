@@ -292,8 +292,6 @@ julia> gif(anim, "1soliton.gif")
 
 ---
 
----
-
 # Usage: Structs and Types
 
 構造体のフィールドオブジェクトを変数と見た時の微分もできる:
@@ -357,7 +355,7 @@ class: center, middle
 
 # Demo
 
-- [もう少し詳しい資料はこちら](flux_tutorial.html)
+ [ガリレオ落下実験](flux_tutorial.html)
 
 
 ---
@@ -408,13 +406,16 @@ julia> using Flux.Data: DataLoader
 julia> using MLDatasets
 julia> xtrain, ytrain = MLDatasets.MNIST.traindata(Float32)
 julia> xtest, ytest = MLDatasets.MNIST.testdata(Float32)
-julia> xtrain = Flux.unsqueeze(xtrain, 3)
-julia> xtest = Flux.unsqueeze(xtest, 3)
-julia> ytrain = Flux.onehotbatch(ytrain, 0:9)
-julia> ytest = Flux.onehotbatch(ytest, 0:9)
+julia> xtrain = Flux.unsqueeze(xtrain, 3) # (28, 28, 60000) -> (28, 28, 1 , 60000)
+julia> xtest = Flux.unsqueeze(xtest, 3)   # (28, 28, 10000) -> (28, 28, 1, 10000)
+julia> ytrain = Flux.onehotbatch(ytrain, 0:9) # (60000,) -> (10, 60000)
+julia> ytest = Flux.onehotbatch(ytest, 0:9)   # (10000,) -> (10, 10000)
 julia> train_loader = DataLoader((xtrain, ytrain), batchsize=128, shuffle=true)
 julia> test_loader = DataLoader((xtest, ytest),  batchsize=128)
 ```
+
+- PyTorch の DataLoader が欲しい場合は [https://github.com/lorenzoh/DataLoaders.jl](https://github.com/lorenzoh/DataLoaders.jl) を見ると良い.
+
 
 ---
 

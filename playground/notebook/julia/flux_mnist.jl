@@ -49,11 +49,10 @@ ENV["DATADEPS_ALWAYS_ACCEPT"] = true
 xtrain, ytrain = MLDatasets.MNIST.traindata(Float32)
 xtest, ytest = MLDatasets.MNIST.testdata(Float32)
 
-xtrain = Flux.unsqueeze(xtrain, 3)
-xtest = Flux.unsqueeze(xtest, 3)
-
-ytrain = Flux.onehotbatch(ytrain, 0:9)
-ytest = Flux.onehotbatch(ytest, 0:9);
+xtrain = Flux.unsqueeze(xtrain, 3) # (28, 28, 60000) -> (28, 28, 1 , 60000)
+xtest = Flux.unsqueeze(xtest, 3)   # (28, 28, 10000) -> (28, 28, 1, 10000)
+ytrain = Flux.onehotbatch(ytrain, 0:9) # (60000,) -> (10, 60000)
+ytest = Flux.onehotbatch(ytest, 0:9);   # (10000,) -> (10, 10000)
 # -
 
 train_loader = DataLoader((xtrain, ytrain), batchsize=args.batchsize, shuffle=true)
@@ -63,7 +62,7 @@ imgs, labels = first(train_loader); # 最初のバッチを取得
 # ## Display example
 
 example_idx = 2
-Gray.(dropdims(imgs[:, :, :, example_idx], dims=3)')
+Gray.(dropdims(imgs[:, :, :, example_idx], dims=3)') # 転置が必要
 
 # +
 struct LeNet
@@ -72,7 +71,7 @@ struct LeNet
     nclasses
 end
 
-Flux.@functor LeNet (cnn_layer, mlp_layer)
+Flux.@functor LeNet (cnn_layer, mlp_layer) # cnn_layer と mlp_layer が学習パラメータであることを指定する
 
 function create_model(imsize::Tuple{Int,Int,Int}, nclasses::Int)
     W, H, inC = imsize
@@ -94,7 +93,7 @@ end
 (net::LeNet)(x) = x |> net.cnn_layer |> flatten |> net.mlp_layer
 
 # +
-model = create_model((28, 28, 1), 10)
+model = create_model((28, 28, 1), 10) |> f32
 ps = Flux.params(model);
 opt = ADAM(args.η)
 loss(ŷ, y) = Flux.Losses.logitcrossentropy(ŷ, y)
