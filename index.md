@@ -13,10 +13,16 @@ class: center, middle
 
 
 
-## Zygote.jl/Flux.jl のお話</span>
+## Zygote.jl/Flux.jl のお話<span style="font-size: 50%; color: black;">+ 可視化ちょっとだけ</span>
 
 
 [SatoshiTerasaki](https://terasakisatoshi.github.io/)@[AtelierArith](https://sites.google.com/atelier-arith.jp/atelier-arith)
+
+
+![](assets/slideurl.png)
+
+
+↑↑↑今日のスライドの置き場↑↑↑
 
 
 ---
