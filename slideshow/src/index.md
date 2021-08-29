@@ -501,8 +501,7 @@ Appendix:
   - Flux.jl のサンプルコード集
 - [Metalhead.jl](https://github.com/FluxML/Metalhead.jl)
   - 画像系のモデルを取り扱っている
-- [Torch.jl](https://github.com/FluxML/Torch.jl
-)
+- [Torch.jl](https://github.com/FluxML/Torch.jl)
   - PyTorch のレイヤーを Julia で使えるようにする. メンテとまってる？
 
 
