@@ -14018,6 +14018,9 @@ a.anchor-link {
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
 <pre>┌ Info: Precompiling Flux [587475ba-b771-5e3f-ad9e-33799f191a9c]
 └ @ Base loading.jl:1342
+┌ Warning: Error requiring `StaticArrays` from `ArrayInterface`
+│   exception = (ErrorException(&#34;too many parameters for type&#34;), Union{Ptr{Nothing}, Base.InterpreterIP}[Ptr{Nothing} @0x00007f006888d8a9, Ptr{Nothing} @0x00007f00688f8e56, Ptr{Nothing} @0x00007f0068903769, Ptr{Nothing} @0x00007f006891ff15, Ptr{Nothing} @0x00007f006891fbce, Ptr{Nothing} @0x00007f0068920811, Ptr{Nothing} @0x00007f0068921297, Base.InterpreterIP in top-level CodeInfo for ArrayInterface at statement 90, Ptr{Nothing} @0x00007f006893cb31, Ptr{Nothing} @0x00007f006893e949, Ptr{Nothing} @0x00007f005375b981, Ptr{Nothing} @0x00007f005375b9ac, Ptr{Nothing} @0x00007f0068903769, Ptr{Nothing} @0x00007f006891ff15, Ptr{Nothing} @0x00007f006891fbce, Ptr{Nothing} @0x00007f0068920811, Ptr{Nothing} @0x00007f0068920b90, Ptr{Nothing} @0x00007f006892104a, Base.InterpreterIP in MethodInstance for err(::Any, ::Module, ::String) at statement 2, Ptr{Nothing} @0x00007f005375b8f7, Ptr{Nothing} @0x00007f005375b90c, Ptr{Nothing} @0x00007f0068903769, Ptr{Nothing} @0x00007f006891ff15, Ptr{Nothing} @0x00007f006891fbce, Ptr{Nothing} @0x00007f00689208a5, Ptr{Nothing} @0x00007f0068920b90, Ptr{Nothing} @0x00007f006892104a, Base.InterpreterIP in MethodInstance for withpath(::Any, ::String) at statement 10, Ptr{Nothing} @0x00007f005375b873, Ptr{Nothing} @0x00007f005375b89c, Ptr{Nothing} @0x00007f0068903769, Ptr{Nothing} @0x00007f006891ff15, Ptr{Nothing} @0x00007f006891fbce, Ptr{Nothing} @0x00007f0068920811, Ptr{Nothing} @0x00007f006892104a, Base.InterpreterIP in MethodInstance for listenpkg(::Any, ::Base.PkgId) at statement 3, Ptr{Nothing} @0x00007f005375aa8c, Ptr{Nothing} @0x00007f005375b56c, Ptr{Nothing} @0x00007f0068903769, Ptr{Nothing} @0x00007f006893c4b5, Ptr{Nothing} @0x00007f006893217c, Ptr{Nothing} @0x00007f00536b9109, Ptr{Nothing} @0x00007f00536ba41f, Ptr{Nothing} @0x00007f00536bb3a8, Ptr{Nothing} @0x00007f00536bbd39, Ptr{Nothing} @0x00007f00536bd23a, Ptr{Nothing} @0x00007f00536bea1d, Ptr{Nothing} @0x00007f00536bf77c, Ptr{Nothing} @0x00007f0068903769, Ptr{Nothing} @0x00007f006893bcd1, Ptr{Nothing} @0x00007f006893dd97, Ptr{Nothing} @0x00007f006893cd7c, Ptr{Nothing} @0x00007f006893e949, Ptr{Nothing} @0x00007f005371955c, Ptr{Nothing} @0x00007f00537198f9, Ptr{Nothing} @0x00007f0068903769, Ptr{Nothing} @0x00007f0053716453, Ptr{Nothing} @0x00007f0068903769, Ptr{Nothing} @0x00007f0068914546, Ptr{Nothing} @0x00007f00536f3eee, Ptr{Nothing} @0x00007f00536f411e, Ptr{Nothing} @0x00007f00536f413c, Ptr{Nothing} @0x00007f0068903769, Ptr{Nothing} @0x00007f0068924c9a, Ptr{Nothing} @0x0000000000000000])
+└ @ Requires /home/runner/.julia/packages/Requires/7Ncym/src/require.jl:49
 ┌ Info: Precompiling MLDatasets [eb30cadb-4394-5ae3-aed4-317e484a6458]
 └ @ Base loading.jl:1342
 ┌ Info: Precompiling Images [916415d5-f1e6-5110-898d-aaa5f9f070e0]
@@ -14259,7 +14262,7 @@ a.anchor-link {
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre><span class="ansi-green-fg">Progress: 100%|█████████████████████████████████████████| Time: 0:01:14</span>
+<pre><span class="ansi-green-fg">Progress: 100%|█████████████████████████████████████████| Time: 0:00:54</span>
 </pre>
 </div>
 </div>
@@ -14271,7 +14274,7 @@ a.anchor-link {
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>acc95.14%
+<pre>acc95.13000000000001%
 </pre>
 </div>
 </div>
@@ -14283,7 +14286,7 @@ a.anchor-link {
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre><span class="ansi-green-fg">Progress: 100%|█████████████████████████████████████████| Time: 0:00:20</span>
+<pre><span class="ansi-green-fg">Progress: 100%|█████████████████████████████████████████| Time: 0:00:13</span>
 </pre>
 </div>
 </div>
@@ -14295,7 +14298,7 @@ a.anchor-link {
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>acc96.88%
+<pre>acc96.89999999999999%
 </pre>
 </div>
 </div>
@@ -14307,7 +14310,7 @@ a.anchor-link {
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre><span class="ansi-green-fg">Progress: 100%|█████████████████████████████████████████| Time: 0:00:20</span>
+<pre><span class="ansi-green-fg">Progress: 100%|█████████████████████████████████████████| Time: 0:00:13</span>
 </pre>
 </div>
 </div>
@@ -14319,7 +14322,7 @@ a.anchor-link {
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>acc97.32%
+<pre>acc97.31%
 </pre>
 </div>
 </div>
@@ -14331,7 +14334,7 @@ a.anchor-link {
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre><span class="ansi-green-fg">Progress: 100%|█████████████████████████████████████████| Time: 0:00:19</span>
+<pre><span class="ansi-green-fg">Progress: 100%|█████████████████████████████████████████| Time: 0:00:12</span>
 </pre>
 </div>
 </div>
@@ -14343,7 +14346,7 @@ a.anchor-link {
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>acc97.95%
+<pre>acc97.92%
 </pre>
 </div>
 </div>
@@ -14355,7 +14358,7 @@ a.anchor-link {
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre><span class="ansi-green-fg">Progress: 100%|█████████████████████████████████████████| Time: 0:00:20</span>
+<pre><span class="ansi-green-fg">Progress: 100%|█████████████████████████████████████████| Time: 0:00:12</span>
 </pre>
 </div>
 </div>
@@ -14367,7 +14370,7 @@ a.anchor-link {
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>acc98.06%
+<pre>acc97.97%
 </pre>
 </div>
 </div>

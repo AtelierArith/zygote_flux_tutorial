@@ -177,7 +177,7 @@ julia> using Zygote
 julia> f(x, y, z) = x　*　y　*　z # もう後がない。助けてくれ
 julia> ∇f(x, y, z) = (y * z, z * x, x * y) # ∇ は \nabla + tab キーで入力できる
 julia> x = 3, y = 5, z = 7 # magnum
-julia> @assert gradient(f, 3, 5, 7) == ∇f(3, 5, 7) == (35, 21, 15)
+julia> @assert gradient(f, x, y, z) == ∇f(x, y, z) == (35, 21, 15)
 ```
 
 
