@@ -12,16 +12,62 @@ class: center, middle
 
 ---
 
+# はじめに(Part 1)
+
+- この講演資料は [こちらのリポジトリ](https://github.com/AtelierArith/zygote_flux_tutorial) にて開発されました. 資料は下記の手順でローカルサーバーを起動することで閲覧できます.
+
+```console
+$ wget https://github.com/AtelierArith/zygote_flux_tutorial/releases/download/artifacts%2Flatest/artifacts.zip
+$ unzip artifacts.zip
+$ julia -e 'using Pkg; Pkg.add("LiveServer")'
+$ julia -e 'using LiveServer; serve(dir="artifacts")'
+✓ LiveServer listening on http://localhost:8000/ ...
+  (use CTRL+C to shut down)
+```
+
+上記の手順実行後 [http://localhost:8000/](http://localhost:8000/) に移動.
+
+---
+
+# はじめに(Part 2)
+
+- Demo をはじめとするノートブックは下記の手順で環境を整えて実行することができます.
+
+```console
+$ git clone https://github.com/AtelierArith/zygote_flux_tutorial.git
+$ cd zygote_flux_tutorial
+$ julia --project
+               _
+   _       _ _(_)_     |  Documentation: https://docs.julialang.org
+  (_)     | (_) (_)    |
+   _ _   _| |_  __ _   |  Type "?" for help, "]?" for Pkg help.
+  | | | | | | |/ _` |  |
+  | | |_| | | | (_| |  |  Version 1.6.2 (2021-07-14)
+ _/ |\__'_|_|_|\__'_|  |  Official https://julialang.org/ release
+|__/                   |
+
+julia> using Pkg; Pkg.activate(pwd()); Pkg.instantiate() # 初回は時間がかかる.
+julia> using IJulia; notebook(dir=pwd())
+install Jupyter via Conda, y/n? [y]: # 初回だけ出てくる. ここでキーボードで y を入力してEnter
+```
+
+- 手元にPC がない人は [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/AtelierArith/zygote_flux_tutorial/HEAD) で遊べます.
+
+
+
+---
+
+
 # お品書き
 
-## [Zygote.jl](https://github.com/FluxML/Zygote.jl)
+### [Zygote.jl](https://github.com/FluxML/Zygote.jl)
 
 - Zygote provides source-to-source automatic differentiation (AD) in Julia, and is the next-gen AD system for the [Flux](https://github.com/FluxML/Flux.jl) differentiable programming framework.
 
 - Julia における__自動微分(=automatic differentiation; AD)__をサポートするパッケージ
 - Julia の（__ユーザが定義したものも含む__）関数 $f=f(x)$ に対する導関数 $f'(x)$ を自動で作ってくれる.
 
-## [Flux.jl](https://github.com/FluxML/Flux.jl)
+### [Flux.jl](https://github.com/FluxML/Flux.jl)
 
 - Flux is an elegant approach to machine learning. It's a 100% pure-Julia stack, and provides lightweight abstractions on top of Julia's native GPU and AD support. Flux makes the easy things easy while remaining fully hackable.
 - Zygote.jl の自動微分を利用した機械学習, 深層学習のモデルを構築することができる.
