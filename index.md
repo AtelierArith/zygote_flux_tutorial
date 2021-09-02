@@ -500,42 +500,6 @@ julia> gif(anim, "1soliton.gif")
 
 
 
-# Usage: Structs and Types
-
-
-構造体のフィールドオブジェクトを変数と見た時の微分もできる:
-
-
-<img src=https://user-images.githubusercontent.com/16760547/130832819-981b2c03-2e13-4156-b69d-70447510c5a9.gif height="120"  hspace="100"/> <img src=https://user-images.githubusercontent.com/16760547/130833654-c4bb6345-4593-4dc6-8dba-2aa0c707e99a.gif height="60"/>
-
-
-```julia
-julia> using Zygote
-julia> struct Affine
-           W # weight matrix
-           b # bias vector
-       end
-julia> (layer::Affine)(x) = layer.W * x .+ layer.b
-julia> W = rand(2, 3); b = rand(2); layer = Affine(W, b); x = rand(3)
-julia> gs = gradient(() -> sum(layer(x)), Params([W, b])) # 勾配の計算. do-syntax を使っても良い.
-julia> gs = gradient(Params([W, b])) do
-           sum(layer(x))
-       end
-julia> @assert gs[W] == hcat(x, x)'
-julia> @assert gs[b] == ones(2)
-```
-
-
-  * このような記法により自動微分の機構と Flux.jl をうまく連携できる.
-
-
----
-
-
-
-
-
-
 # Zygote.jl に関するここまでのまとめ
 
 
@@ -552,6 +516,52 @@ julia> @assert gs[b] == ones(2)
 
   * [この資料をご覧ください](zygote_internals.html)
   * or [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/AtelierArith/zygote_flux_tutorial/HEAD?filepath=playground%2Fnotebook%2Fjulia%2Fzygote_internals.jl)
+
+
+---
+
+
+
+
+
+
+# Appendix: いろんな可視化ツール
+
+
+  * [Plots.jl](https://github.com/JuliaPlots/Plots.jl)
+
+      * 様々なグラフ描画機能ライブラリ（バックエンド）を統一したインタフェースで使えることを目指したパッケージ. GIF アニメーションを作るのも楽.
+  * [Makie.jl](https://github.com/JuliaPlots/Makie.jl)
+
+      * GPU リソースを使って３Dのオブジェクトを描画できる.
+      * [100daysOfMakie](https://twitter.com/hashtag/100daysOfMakie?src=hashtag_click) が始まっているらしい.
+
+
+---
+
+
+
+
+
+
+# Application: いろんな可視化ツール
+
+
+既存のライブラリを Julia から呼び出せるシリーズ
+
+
+  * [PyPlot.jl](https://github.com/JuliaPy/PyPlot.jl)
+
+      * `using PyPlot` さえすれば `plt.plot(...)` のような Python の [matplotlib](https://matplotlib.org/stable/) の文法がそのまま使える.
+  * [PlotlyJS.jl](https://github.com/JuliaPlots/PlotlyJS.jl)
+
+      * [Plotly.js](https://plotly.com/javascript/) の機能を Julia から呼び出せる
+  * [JSXGraph.jl](https://github.com/tlienart/JSXGraph.jl)
+
+      * [jsxgraph](https://jsxgraph.org/wp/index.html) を Julia から動かせる
+  * [Gnuplot.jl](https://github.com/gcalderone/Gnuplot.jl)
+
+      * [gnuplot](http://gnuplot.sourceforge.net/) の命令を Julia から使える.
 
 
 ---
@@ -587,6 +597,42 @@ class: center, middle
   * 最近の動向は YouTube で確認できる:
 
       * [A Tour of the differentiable programming landscape with Flux.jl | Dhairya Gandhi | JuliaCon2021](https://www.youtube.com/watch?v=_UOD4hceFDQ)
+
+
+---
+
+
+
+
+
+
+# Flux.jl/Zygote.jl
+
+
+構造体のフィールドオブジェクトを変数と見た時の微分もできる:
+
+
+<img src=https://user-images.githubusercontent.com/16760547/130832819-981b2c03-2e13-4156-b69d-70447510c5a9.gif height="120"  hspace="100"/> <img src=https://user-images.githubusercontent.com/16760547/130833654-c4bb6345-4593-4dc6-8dba-2aa0c707e99a.gif height="60"/>
+
+
+```julia
+julia> using Zygote
+julia> struct Affine
+           W # weight matrix
+           b # bias vector
+       end
+julia> (layer::Affine)(x) = layer.W * x .+ layer.b
+julia> W = rand(2, 3); b = rand(2); layer = Affine(W, b); x = rand(3)
+julia> gs = gradient(() -> sum(layer(x)), Params([W, b])) # 勾配の計算. do-syntax を使っても良い.
+julia> gs = gradient(Params([W, b])) do
+           sum(layer(x))
+       end
+julia> @assert gs[W] == hcat(x, x)'
+julia> @assert gs[b] == ones(2)
+```
+
+
+  * このような記法により自動微分の機構と Flux.jl をうまく連携できる.
 
 
 ---
@@ -812,7 +858,11 @@ julia> @assert gs[b] == 1
 ---
 
 
-Appendix: 
+
+
+
+
+# Appendix:
 
 
   * [FluxML/model-zoo](https://github.com/FluxML/model-zoo)
@@ -827,8 +877,6 @@ Appendix:
 
 
 ---
-
-
 
 
 
@@ -854,6 +902,7 @@ Appendix:
   * [JuliaCon YouTube 動画](https://www.youtube.com/results?search_query=Juliacon)
   * [Introduction to Computational Thinking](https://computationalthinking.mit.edu/Spring21/)
   * [Think Julia: How to Think Like a Computer Scientist](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html)
+  * [Julia Data Science](https://juliadatascience.io/)
 
 
 ---
