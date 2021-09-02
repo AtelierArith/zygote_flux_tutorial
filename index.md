@@ -902,7 +902,6 @@ julia> @assert gs[b] == 1
   * [JuliaCon YouTube 動画](https://www.youtube.com/results?search_query=Juliacon)
   * [Introduction to Computational Thinking](https://computationalthinking.mit.edu/Spring21/)
   * [Think Julia: How to Think Like a Computer Scientist](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html)
-  * [Julia Data Science](https://juliadatascience.io/)
 
 
 ---
