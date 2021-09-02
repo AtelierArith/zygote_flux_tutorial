@@ -95,7 +95,7 @@ Base.adjoint(f::Function) = x -> gradient(f, x)[1]
 julia> using Zygote
 julia> f(x, y, z) = x　*　y　*　z # もう後がない。助けてくれ
 julia> ∇f(x, y, z) = (y * z, z * x, x * y) # ∇ は \nabla + tab キーで入力できる
-julia> x = 3, y = 5, z = 7 # magnum
+julia> x = 3; y = 5; z = 7 # magnum
 julia> @assert gradient(f, x, y, z) == ∇f(x, y, z) == (35, 21, 15)
 ```
 
@@ -129,6 +129,7 @@ julia> @assert gradient(det, X)[begin] == det(X) * inv(X')
 julia> X = rand(3, 3); # もちろん入力が数値の場合でもOK
 julia> @assert gradient(det, X)[begin] ≈ det(X) * inv(X')
 ```
+
 ---
 
 # Usage: Jacobian matrix Part 1
@@ -233,6 +234,7 @@ julia> quiver!(
 julia> using Zygote
 julia> f(x) = 3^x
 julia> df(x) = log(3) * 3^x; ddf(x) = log(3)^2 * 3^x
+julia> x = log(3)
 julia> @assert f'(x) ≈ df(x)
 julia> @assert f''(x) ≈ ddf(x)
 ```
