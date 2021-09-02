@@ -344,7 +344,66 @@ julia> gif(anim, "1soliton.gif")
 
 ---
 
-# Usage: Structs and Types
+# Zygote.jl に関するここまでのまとめ 
+
+- Julia の中で定義した関数の微分は `using Zygote` を詠唱し適切な関数を呼び出すことで導関数を使うことができてしまった.
+- 他の Julia パッケージと連携して使う例も紹介した.
+
+## もう少し内部のことを知りたい場合は
+
+- [この資料をご覧ください](zygote_internals.html)
+- or [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/AtelierArith/zygote_flux_tutorial/HEAD?filepath=playground%2Fnotebook%2Fjulia%2Fzygote_internals.jl)
+
+---
+
+# Appendix: いろんな可視化ツール
+
+- [Plots.jl](https://github.com/JuliaPlots/Plots.jl)
+  - 様々なグラフ描画機能ライブラリ（バックエンド）を統一したインタフェースで使えることを目指したパッケージ. GIF アニメーションを作るのも楽.
+- [Makie.jl](https://github.com/JuliaPlots/Makie.jl)
+  - GPU リソースを使って３Dのオブジェクトを描画できる.
+  - [100daysOfMakie](https://twitter.com/hashtag/100daysOfMakie?src=hashtag_click) が始まっているらしい.
+
+
+---
+
+# Application: いろんな可視化ツール
+
+既存のライブラリを Julia から呼び出せるシリーズ
+
+- [PyPlot.jl](https://github.com/JuliaPy/PyPlot.jl)
+  - `using PyPlot` さえすれば `plt.plot(...)` のような Python の [matplotlib](https://matplotlib.org/stable/) の文法がそのまま使える.
+- [PlotlyJS.jl](https://github.com/JuliaPlots/PlotlyJS.jl)
+  - [Plotly.js](https://plotly.com/javascript/) の機能を Julia から呼び出せる
+- [JSXGraph.jl](https://github.com/tlienart/JSXGraph.jl)
+  - [jsxgraph](https://jsxgraph.org/wp/index.html) を Julia から動かせる
+- [Gnuplot.jl](https://github.com/gcalderone/Gnuplot.jl)
+  - [gnuplot](http://gnuplot.sourceforge.net/) の命令を Julia から使える.
+
+---
+
+class: center, middle
+
+# Flux.jl のお話
+
+---
+
+# Flux.jl
+
+- 自動微分 Zygote.jl の上に構築された機械学習ライブラリ.
+- PyTorch のように深層学習のモデル構築に必要な機能を提供
+  - MLP/CNN などのレイヤーを提供
+  - 最適化アルゴリズム
+  - モデルを GPU リソースを用いて学習することもできる
+- 自前のモデルを構造体として定義しそれを組み合わせることもできる
+
+- 最近の動向は YouTube で確認できる:
+  - [A Tour of the differentiable programming landscape with Flux.jl | Dhairya Gandhi | JuliaCon2021](https://www.youtube.com/watch?v=_UOD4hceFDQ)
+
+
+---
+
+# Flux.jl/Zygote.jl
 
 構造体のフィールドオブジェクトを変数と見た時の微分もできる:
 
@@ -368,39 +427,6 @@ julia> @assert gs[b] == ones(2)
 ```
 
 - このような記法により自動微分の機構と Flux.jl をうまく連携できる.
-
----
-
-# Zygote.jl に関するここまでのまとめ 
-
-- Julia の中で定義した関数の微分は `using Zygote` を詠唱し適切な関数を呼び出すことで導関数を使うことができてしまった.
-- 他の Julia パッケージと連携して使う例も紹介した.
-
-## もう少し内部のことを知りたい場合は
-
-- [この資料をご覧ください](zygote_internals.html)
-- or [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/AtelierArith/zygote_flux_tutorial/HEAD?filepath=playground%2Fnotebook%2Fjulia%2Fzygote_internals.jl)
-
----
-
-class: center, middle
-
-# Flux.jl のお話
-
----
-
-# Flux.jl
-
-- 自動微分 Zygote.jl の上に構築された機械学習ライブラリ.
-- PyTorch のように深層学習のモデル構築に必要な機能を提供
-  - MLP/CNN などのレイヤーを提供
-  - 最適化アルゴリズム
-  - モデルを GPU リソースを用いて学習することもできる
-- 自前のモデルを構造体として定義しそれを組み合わせることもできる
-
-- 最近の動向は YouTube で確認できる:
-  - [A Tour of the differentiable programming landscape with Flux.jl | Dhairya Gandhi | JuliaCon2021](https://www.youtube.com/watch?v=_UOD4hceFDQ)
-
 
 ---
 
@@ -548,7 +574,7 @@ julia> @assert gs[b] == 1
 
 ---
 
-Appendix: 
+# Appendix: 
 
 - [FluxML/model-zoo](https://github.com/FluxML/model-zoo)
   - Flux.jl のサンプルコード集
