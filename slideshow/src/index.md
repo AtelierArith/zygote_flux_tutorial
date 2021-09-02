@@ -46,7 +46,7 @@ $ julia --project
  _/ |\__'_|_|_|\__'_|  |  Official https://julialang.org/ release
 |__/                   |
 
-julia> using Pkg; Pkg.activate(pwd()); Pkg.instantiate() # 初回は時間がかかる.
+julia> using Pkg; Pkg.activate(pwd()); Pkg.instantiate() # 初回のみでOK
 julia> using IJulia; notebook(dir=pwd())
 install Jupyter via Conda, y/n? [y]: # 初回だけ出てくる. ここでキーボードで y を入力してEnter
 ```
