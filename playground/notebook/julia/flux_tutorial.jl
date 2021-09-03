@@ -61,6 +61,23 @@ gradient(f, 1, 2, 3)
 # ### 構造体のフィールドに関する微分
 #
 # - パラメータ付 $w$ を持つ関数 `f=f(x; w)` において, $w$ をうまく調節することで所望の出力を得たいことはよくある. 勾配法によるパラメータの最適化をするとすれば $\frac{\partial f}{\partial w}$ を計算することが必要. Flux.jl ではこういうことができる.
+#
+# ```julia
+# using Zygote
+# struct Affine
+#            W # weight matrix
+#            b # bias vector
+#        end
+# (layer::Affine)(x) = layer.W * x .+ layer.b
+# W = rand(2, 3); b = rand(2); layer = Affine(W, b); x = rand(3)
+# gs = gradient(() -> sum(layer(x)), Params([W, b])) # 勾配の計算. do-syntax を使っても良い.
+# gs = gradient(Params([W, b])) do
+#            sum(layer(x))
+#        end
+# @assert gs[W] == hcat(x, x)'
+# @assert gs[b] == ones(2)
+# ```
+#
 # - もっと言えば TensorFlow や PyTorch などのような深層学習に使われるレイヤー，最適化アルゴリズムを提供している.
 
 # ## ガリレオの実験の Flux 版
