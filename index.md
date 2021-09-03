@@ -78,8 +78,8 @@ $ julia --project
 |__/                   |
 
 julia> using Pkg; Pkg.activate(pwd()); Pkg.instantiate() # 初回のみでOK
-julia> using IJulia; notebook(dir=pwd())
-install Jupyter via Conda, y/n? [y]: # 初回だけ出てくる. ここでキーボードで y を入力してEnter
+julia> using Conda; Conda.add(["jupyter", "jupytext"], channel="conda-forge") # 初回のみでOK
+julia> using IJulia; notebook(dir=pwd()) # 次回以降はこれでOK
 ```
 
 
