@@ -1,5 +1,6 @@
 [deps]
 ArrayInterface = "4fba245c-0d91-5ea0-9b3e-6abc04ee57a9"
+Conda = "8f4d0f93-b110-5947-807f-2305c1781a2d"
 Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
 HCubature = "19dc6840-f33b-545b-b366-655c7e3ffd49"
 IJulia = "7073ff75-c697-5162-941a-fcdaad2a7d2a"
