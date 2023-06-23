@@ -54,9 +54,17 @@ julia> using IJulia; notebook(dir=pwd()) # 次回以降はこれでOK
 - 手元にPC がない人は [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/AtelierArith/zygote_flux_tutorial/HEAD) で遊べます.
 
 
-
 ---
 
+# Remark
+
+- この講演は 2021 年に行われた講演です．2023 年の時点では一部古い情報もあります．
+- Reverse mode による Zygote.jl では二階微分以上の計算は結構大変です．
+- 微分の計算は Zygote.jl のほかに Forward mode をベースにした ForwardDiff.jl による方法もあります．
+- 他にもLLVMベースの Enzyme.jl，抽象インターフェース AbstractDifferentiation.jl が提案されています．
+- Flux.jl の次世代版として Lux.jl が登場しています．
+
+---
 
 # お品書き
 
