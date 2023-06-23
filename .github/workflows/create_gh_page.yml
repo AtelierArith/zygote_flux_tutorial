@@ -22,13 +22,13 @@ jobs:
     - name: Install python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.8'
+        python-version: '3.10'
     - name: Install dependencies for Python
       run: pip install matplotlib numpy jupytext jupyter scipy
     - name: Install Julia
       uses: julia-actions/setup-julia@v1
       with:
-        version: 1.6.2
+        version: 1.9.1
     - name: Install dependencies for Julia
       run: |
         julia -e 'using Pkg; Pkg.instantiate();'
