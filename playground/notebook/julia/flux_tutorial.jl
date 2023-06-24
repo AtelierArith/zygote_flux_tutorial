@@ -27,7 +27,7 @@ using Flux
 using Plots
 # -
 
-]st Flux
+] st Flux
 
 # ## Flux.jl で何ができるのか？
 #
