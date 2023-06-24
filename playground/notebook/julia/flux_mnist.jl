@@ -90,7 +90,7 @@ function create_model(imsize::Tuple{Int,Int,Int}, nclasses::Int)
     LeNet(cnn_layer, mlp_layer, nclasses)
 end
 
-(net::LeNet)(x) = x |> net.cnn_layer |> flatten |> net.mlp_layer
+(net::LeNet)(x) = x |> net.cnn_layer |> Flux.flatten |> net.mlp_layer
 
 # +
 model = create_model((28, 28, 1), 10) |> f32
